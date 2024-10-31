@@ -1,5 +1,5 @@
 <footer>
-	<a href="https://www.ocf.berkeley.edu">
+	<a href="https://www.ocf.berkeley.edu" style="max-width: 150px; min-width: 100px">
 	<img
 		src="https://www.ocf.berkeley.edu/hosting-logos/ocf-hosted-penguin.svg"
 		alt="Hosted by the OCF"
