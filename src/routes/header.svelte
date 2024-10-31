@@ -2,7 +2,6 @@
     <div class="navbar-container">
         <a class="logo" href='/'>DG@B</a>
         <a href='/songlist'>Song List</a>
-        <a href='/testimonials'>Testimonials</a>
     </div>
 </header>
 

@@ -23,28 +23,6 @@
 	</p>
 	</article>
 	<hr />
-	<article id="displacement">
-	<h1>Displacement of Our Community</h1>
-	<p>
-		On February 27th, 2024, Dances Games at Berkeley was asked to remove
-		the DDR machine from Eshleman Hall. We are currently working with the
-		ASUC to find a new location for the machine. In the meantime, we are
-		still hosting events and meetings. If you are a member and have any
-		potential location leads or would like to submit a testimonial about
-		how the machine and its removal has affected you, please use the
-		Google form in the Discord server. If you're not a member but still
-		want to get in touch, you can join our discord server or
-		<a href="#contact">contact us</a> below. You can view the testimonials
-		<a href="testimonials/">here</a>.
-	</p>
-	<p>
-		<b>4/10/2024 Update</b>: After discussing with the ASUC, it looks like
-		we will be able to find a location to keep the DDR machine on campus!
-		We will keep you updated as we learn more.
-		<a href="https://discord.gg/DzhkQasw3C">Join our discord</a> to stay
-		in the loop!
-	</p>
-	</article>
 	<hr />
 	<article id="queueing">
 	<h1>Queueing</h1>
