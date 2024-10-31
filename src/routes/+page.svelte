@@ -3,7 +3,11 @@
 	<meta name="description" content="awa" />
 </svelte:head>
 
-<section class="splash">
+<script lang="ts">
+	import { base } from "$app/paths";
+</script>
+
+<section class="splash" style={`background: linear-gradient(var(--darken-value), var(--darken-value)),url("${base}/splash-bg.webp");`}>
 	<div class="splash-text">
 	<h1 class="title">Dance Games at Berkeley</h1>
 	<a class="discord-link" href="https://discord.gg/DzhkQasw3C"
@@ -22,7 +26,6 @@
 		open to all people at all levels of skill and experience.
 	</p>
 	</article>
-	<hr />
 	<hr />
 	<article id="queueing">
 	<h1>Queueing</h1>

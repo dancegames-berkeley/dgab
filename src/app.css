@@ -3,75 +3,74 @@
 	--black-text: rgb(40, 40, 40);
 	--content-width: clamp(300px, 80vw, 1000px);
 	--navbar-color: rgb(176, 183, 195);
-  }
+}
 
-  html {
+html {
 	scroll-behavior: smooth;
-  }
+}
 
-  body {
+body {
 	margin: 0;
 	font-family: "Roboto", sans-serif;
-	overflow-x: hidden; /* This shouldn't be here. Need to figure out what's causing the content overflow... */
+	overflow-x: hidden;
+	/* This shouldn't be here. Need to figure out what's causing the content overflow... */
 	line-height: 1.5;
 	color: var(--black-text);
 	background-color: rgb(255, 255, 255);
-  }
+}
 
-  h1 {
+h1 {
 	font-size: 1.5em;
 	margin-top: 15px;
 	margin-bottom: 10px;
-  }
+}
 
-  h2 {
+h2 {
 	font-size: 1.3em;
 	margin-top: 10px;
 	margin-bottom: 8px;
-  }
+}
 
-  hr {
+hr {
 	width: var(--content-width);
 	background: rgb(200, 200, 200);
 	border: 0;
 	height: 2px;
-  }
+}
 
-  .logo {
+.logo {
 	margin-left: 0px !important;
 	font-size: 25px;
-  }
+}
 
-  .splash {
+.splash {
 	--darken-value: rgba(0, 0, 0, 0.75);
-	background: linear-gradient(var(--darken-value), var(--darken-value)),
-	  url("splash-bg.webp");
 	background-size: cover;
 	background-position: center;
-  
+
 	display: flex;
 	align-items: center;
 	justify-content: center;
-  
-	height: 85vh;
-  }
 
-  .splash-text {
+	height: 85vh;
+}
+
+.splash-text {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-  }
+}
 
-  .title {
+.title {
 	color: var(--white-text);
 	font-size: clamp(2.5em, 7.5vw, 4.5em);
 	line-height: 1;
 	width: clamp(0px, 80vw, 1000px);
 	text-align: center;
 	margin: 25px;
-  }
+}
 
-  .discord-link {
+.discord-link {
 	color: var(--white-text);
 	font-size: 25px;
 	margin: 5px;
@@ -80,37 +79,37 @@
 	border-radius: 10px;
 	background-color: transparent;
 	text-decoration: none;
-  }
+}
 
-  .discord-button:hover {
+.discord-button:hover {
 	cursor: pointer;
-  }
+}
 
-  .content {
+.content {
 	display: flex;
 	margin: auto;
 	flex-direction: column;
 	width: var(--content-width);
 	font-size: 18px;
-  }
+}
 
-  .footnote {
+.footnote {
 	font-size: 16px;
-  }
+}
 
-  .university-disclaimer {
+.university-disclaimer {
 	color: rgb(150, 150, 150);
 	text-align: right;
 	width: clamp(300px, 60vw, 550px);
-  }
+}
 
-  @media only screen and (max-width: 615px) {
+@media only screen and (max-width: 615px) {
 	.footer {
-	  flex-direction: column;
-	  justify-content: center;
+		flex-direction: column;
+		justify-content: center;
 	}
+
 	.university-disclaimer {
-	  text-align: center;
+		text-align: center;
 	}
-  }
-  
+}
