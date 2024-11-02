@@ -22,7 +22,7 @@
 		Dance Games at Berkeley exists to foster a community around and
 		through arcade style dance games like Dance Dance Revolution, Pump It
 		Up, and In the Groove. The club also manages and maintains the Dance
-		Dance Revolution machine here at Berkeley. The club and machine are
+		Dance Revolution machine here at Berkeley, located at the <a href="https://recwell.berkeley.edu/competitive-programs/cal-esports/">Cal Esports Community Center</a>. The club and machine are
 		open to all people at all levels of skill and experience.
 	</p>
 	</article>
