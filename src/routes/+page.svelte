@@ -24,7 +24,7 @@
 </svelte:head>
 
 <section
-	class="bg-cover bg-center bg-[linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.6)),url('splash-bg.webp')] flex flex-col items-center justify-center h-screen"
+	class="bg-cover bg-center bg-[linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.6)),url('/splash-bg.webp')] flex flex-col items-center justify-center h-screen"
 >
 	<div
 		class="flex flex-col justify-between items-center h-full w-full relative"

@@ -1,10 +1,8 @@
 import { json } from '@sveltejs/kit';
 import { readdir, unlink, writeFile } from 'fs/promises';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-import type { RequestHandler } from '@sveltejs/kit';
+import { join } from 'path';
 
-export async function POST({ request, params }) {
+export async function POST({ request }) {
   const IMAGES_DIR = 'src/lib/songlist/images'
   try {
     const data = await request.formData();
