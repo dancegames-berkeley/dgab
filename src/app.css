@@ -1,115 +1,88 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&display=swap');
+
+@font-face {
+  font-family: 'Miso';
+  font-weight: 300;
+  src: url('/fonts/miso-light.woff') format('woff');
+}
+@font-face {
+  font-family: 'Miso';
+  font-weight: 400;
+  src: url('/fonts/miso.woff') format('woff');
+}
+@font-face {
+  font-family: 'Miso';
+  font-weight: 700;
+  src: url('/fonts/miso-bold.woff') format('woff');
+}
+
+@font-face {
+	font-family: 'Wendy';
+	src: url('/fonts/wendy.ttf') format('truetype');
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    html {
+        @apply text-lg leading-loose text-white;
+		scroll-behavior: smooth;
+    }
+
+	body {
+		@apply text-lg;
+	}
+
+	a {
+		@apply text-blue-300 hover:text-blue-500 font-semibold transition duration-500;
+	}
+
+	h1 {
+		@apply text-3xl font-semibold mb-8 underline underline-offset-16 decoration-4;
+	} 
+
+
+	b {
+		@apply font-semibold;
+	}
+
+	ul > li > ul,
+    ol > li > ol,
+	ol > li > ul,
+	ul > li > ol {
+        @apply text-base font-normal leading-10;
+    }
+
+	.heading {
+		@apply text-2xl font-bold p-2;
+	}
+
+	.navlink {
+		@apply h-full flex items-center px-4 border-b-4 border-transparent transition duration-500 hover:border-blue-500;
+	}
+
+	.dropdownlink {
+		@apply h-full flex items-center p-4;
+	}
+
+	.content {
+		@apply sm:w-11/12 md:w-10/12 max-w-5xl mx-auto;
+	}
+
+	.focused {
+		@apply bg-blue-700 !text-white;
+	  }
+
+	.bg-placeholder {
+		@apply bg-gray-800; 
+	}
+}
+
 :root {
-	--white-text: rgb(255, 255, 255);
-	--black-text: rgb(40, 40, 40);
-	--content-width: clamp(300px, 80vw, 1000px);
-	--navbar-color: rgb(176, 183, 195);
-}
-
-html {
-	scroll-behavior: smooth;
-}
-
-body {
-	margin: 0;
-	font-family: "Roboto", sans-serif;
-	overflow-x: hidden;
-	/* This shouldn't be here. Need to figure out what's causing the content overflow... */
-	line-height: 1.5;
-	color: var(--black-text);
-	background-color: rgb(255, 255, 255);
-}
-
-h1 {
-	font-size: 1.5em;
-	margin-top: 15px;
-	margin-bottom: 10px;
-}
-
-h2 {
-	font-size: 1.3em;
-	margin-top: 10px;
-	margin-bottom: 8px;
-}
-
-hr {
-	width: var(--content-width);
-	background: rgb(200, 200, 200);
-	border: 0;
-	height: 2px;
-}
-
-.logo {
-	margin-left: 0px !important;
-	font-size: 25px;
-}
-
-.splash {
-	--darken-value: rgba(0, 0, 0, 0.75);
-	background-size: cover;
-	background-position: center;
-
-	display: flex;
-	align-items: center;
-	justify-content: center;
-
-	height: 85vh;
-}
-
-.splash-text {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-}
-
-.title {
-	color: var(--white-text);
-	font-size: clamp(2.5em, 7.5vw, 4.5em);
-	line-height: 1;
-	width: clamp(0px, 80vw, 1000px);
-	text-align: center;
-	margin: 25px;
-}
-
-.discord-link {
-	color: var(--white-text);
-	font-size: 25px;
-	margin: 5px;
-	padding: 12px;
-	border: 2px solid white;
-	border-radius: 10px;
-	background-color: transparent;
-	text-decoration: none;
-}
-
-.discord-button:hover {
-	cursor: pointer;
-}
-
-.content {
-	display: flex;
-	margin: auto;
-	flex-direction: column;
-	width: var(--content-width);
-	font-size: 18px;
-}
-
-.footnote {
-	font-size: 16px;
-}
-
-.university-disclaimer {
-	color: rgb(150, 150, 150);
-	text-align: right;
-	width: clamp(300px, 60vw, 550px);
-}
-
-@media only screen and (max-width: 615px) {
-	.footer {
-		flex-direction: column;
-		justify-content: center;
-	}
-
-	.university-disclaimer {
-		text-align: center;
-	}
-}
+	--footer-height: 0px; /* Default value */
+	--header-height: 0px; /* Default value */
+  }
