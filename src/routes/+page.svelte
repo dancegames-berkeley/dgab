@@ -63,7 +63,7 @@
 					Revolution, Pump It Up, and In the Groove. The club also
 					manages and maintains the Dance Dance Revolution machine
 					here at Berkeley, located at the <a
-						href="https://recwell.berkeley.edu/competitive-programs/cal-esports/"
+						href="https://maps.app.goo.gl/D4XnaBWEVVCSXPidA"
 						>Cal Esports Community Center</a
 					>. The club and machine are open to all people at all levels
 					of skill and experience.
