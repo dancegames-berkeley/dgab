@@ -39,46 +39,53 @@
   let focused_song_title: string;
   let focused_song_artist: string;
   let focused_song_charts: ChartDetails[];
+  try {
+    for (const pack in packs) {
+      if (packs.hasOwnProperty(pack)) {
+        const packData = packs[pack];
+        const packSongs: SongDetails[] = [];
 
-  for (const pack in packs) {
-    if (packs.hasOwnProperty(pack)) {
-      const packData = packs[pack];
-      const packSongs: SongDetails[] = [];
+        try {
+          for (const song in packData["SONGS"]) {
+            const songData = packData["SONGS"][song];
+            const charts: ChartDetails[] = [];
 
-      for (const song in packData["SONGS"]) {
-        const songData = packData["SONGS"][song];
-        const charts: ChartDetails[] = [];
+            // create a new dictionary to map meter -> difficulty
+            for (const chart in songData["CHARTS"]) {
+              const chartData = songData["CHARTS"][chart];
 
-        // create a new dictionary to map meter -> difficulty
-        for (const chart in songData["CHARTS"]) {
-          const chartData = songData["CHARTS"][chart];
+              const chartDetails: ChartDetails = {
+                meter: chartData["METER"],
+                difficulty: chartData["DIFFICULTY"],
+                credit: chartData["CREDIT"],
+              };
+              charts.push(chartDetails);
+            }
 
-          const chartDetails: ChartDetails = {
-            meter: chartData["METER"],
-            difficulty: chartData["DIFFICULTY"],
-            credit: chartData["CREDIT"],
-          };
-          charts.push(chartDetails);
+            const songDetails: SongDetails = {
+              title: songData["TITLE"],
+              pack: pack,
+              artist: songData["ARTIST"],
+              charts: charts,
+              banner: songData["BANNER_PATH"],
+            };
+            packSongs.push(songDetails);
+          }
+        } catch (e) {
+          console.error("Error processing songs: ", e);
         }
 
-        const songDetails: SongDetails = {
-          title: songData["TITLE"],
-          pack: pack,
-          artist: songData["ARTIST"],
-          charts: charts,
-          banner: songData["BANNER_PATH"],
+        // add song to packs list
+        const packDetails: PackDetails = {
+          name: pack,
+          songs: packSongs,
+          banner: packData["BANNER_PATH"],
         };
-        packSongs.push(songDetails);
+        packDict[pack] = packDetails;
       }
-
-      // add song to packs list
-      const packDetails: PackDetails = {
-        name: pack,
-        songs: packSongs,
-        banner: packData["BANNER_PATH"],
-      };
-      packDict[pack] = packDetails;
     }
+  } catch (e) {
+    console.error("Error processing pack data: ", e);
   }
 
   // on click show dropdown for all songs in pack
@@ -90,41 +97,45 @@
   // draw arrows background
   // TODO: window resizing works almost all the time but will occasionaly draw arrows on the wrong dimensions and either leave space or overflow (vertically it looks like). i can't seem to reproduce this error. would be nice to fix
   onMount(() => {
-    const canvas = document.getElementById("arrowsbg") as HTMLCanvasElement;
-    const section = document.getElementById("current song") as HTMLElement;
+    try {
+      const canvas = document.getElementById("arrowsbg") as HTMLCanvasElement;
+      const section = document.getElementById("current song") as HTMLElement;
 
-    drawArrows(canvas, section);
+      drawArrows(canvas, section);
 
-    // redraw on window resize
-    const handleResize = () => drawArrows(canvas, section);
-    window.addEventListener("resize", handleResize);
+      // redraw on window resize
+      const handleResize = () => drawArrows(canvas, section);
+      window.addEventListener("resize", handleResize);
 
-    // keyboard navigation
-    window.addEventListener("keydown", handleKeydown);
-    window.addEventListener("keydown", handleEnter);
-    window.addEventListener("mousemove", handleHover);
+      // keyboard navigation
+      window.addEventListener("keydown", handleKeydown);
+      window.addEventListener("keydown", handleEnter);
+      window.addEventListener("mousemove", handleHover);
 
-    // find all scrollable items on mount
-    updateScrollable();
-
-    // update scrollable items when pack is expanded
-    const observer = new MutationObserver(() => {
+      // find all scrollable items on mount
       updateScrollable();
-    });
 
-    observer.observe(listContainer, { childList: true, subtree: true });
+      // update scrollable items when pack is expanded
+      const observer = new MutationObserver(() => {
+        updateScrollable();
+      });
 
-    // highlight the first element on mount
-    if (scrollable.length > 0) {
-      scrollable[currentIndex].classList.add("focused");
+      observer.observe(listContainer, { childList: true, subtree: true });
+
+      // highlight the first element on mount
+      if (scrollable.length > 0) {
+        scrollable[currentIndex].classList.add("focused");
+      }
+
+      return () => {
+        window.removeEventListener("resize", handleResize);
+        window.removeEventListener("keydown", handleKeydown);
+        window.removeEventListener("keydown", handleEnter);
+        window.removeEventListener("mousemove", handleHover);
+      };
+    } catch (e) {
+      console.error("Error on mount: ", e);
     }
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      window.removeEventListener("keydown", handleKeydown);
-      window.removeEventListener("keydown", handleEnter);
-      window.removeEventListener("mousemove", handleHover);
-    };
   });
 
   // updates CSS to show focus on the current element

@@ -50,7 +50,7 @@
 			<a class="navlink" href="/#queueing">Queueing</a>
 			<a class="navlink" href="/#rules">Rules</a>
 			<a class="navlink" href="/#contact">Contact</a>
-			<a class="navlink" href="/songlist">Song List</a>
+			<a class="navlink" target="_self" href="/songlist">Song List</a>
 		</div>
 		<div class="block md:hidden ml-auto my-auto flex h-full justify-end">
 			<button on:click={toggleMenu} class="p-3 flex-auto">

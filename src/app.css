@@ -34,7 +34,11 @@
     }
 
 	body {
-		@apply text-lg;
+		@apply text-lg leading-loose;
+	}
+
+	ol, ul, li {
+		@apply text-lg leading-loose;
 	}
 
 	a {
@@ -56,6 +60,10 @@
 	ul > li > ol {
         @apply text-base font-normal leading-10;
     }
+
+	p {
+		@apply break-words whitespace-normal;
+	}
 
 	.heading {
 		@apply text-2xl font-bold p-2;

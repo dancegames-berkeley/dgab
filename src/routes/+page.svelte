@@ -24,12 +24,12 @@
 </svelte:head>
 
 <section
-	class="bg-cover bg-center bg-[linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.6)),url('/splash-bg.webp')] flex flex-col items-center justify-center h-screen"
+	class="splash-area bg-cover bg-center bg-[linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.6)),url('/splash-bg.webp')] flex flex-col items-center justify-center h-screen"
 >
 	<div
 		class="flex flex-col justify-between items-center h-full w-full relative"
 	>
-		<div id="splash" class="flex flex-col items-center absolute top-[25%]">
+		<div id="splash" class=" flex flex-col items-center absolute top-[25%]">
 			<div class="text-4xl md:text-6xl m-10 text-white font-bold">
 				Dance Games at Berkeley
 			</div>
@@ -73,8 +73,11 @@
 	</section>
 	<section id="content" class="relative w-screen bg-navy">
 		<section class="flex-col content p-4 z-10 relative">
-			<article id="queueing" class="flex flex-row scroll-mt-14">
-				<div class="p-4">
+			<article
+				id="queueing"
+				class="flex flex-row scroll-mt-14 my-4 max-w-full w-full overflow-hidden break-words whitespace-normal"
+			>
+				<div class="md:p-4">
 					<div class="pb-8">
 						<h1 class="decoration-yellow-500">Queuing</h1>
 						<p>
@@ -129,8 +132,11 @@
 				</div>
 			</article>
 
-			<article id="rules" class="flex flex-row scroll-mt-14">
-				<div class="p-4">
+			<article
+				id="rules"
+				class="flex flex-row scroll-mt-14 my-4 max-w-full w-full overflow-hidden break-words whitespace-normal"
+			>
+				<div class="md:p-4">
 					<h1 class="decoration-yellow-500">Rules</h1>
 					<p>
 						Read our community's
@@ -142,7 +148,7 @@
 						>
 						for a more comprehensive set of rules.
 					</p>
-					<ol class="p-8 list-decimal leading-10">
+					<ol class="pl-8 md:p-8 list-decimal leading-10">
 						<li class="heading">
 							Respect the equipment
 
@@ -190,8 +196,11 @@
 					</p>
 				</div>
 			</article>
-			<article id="contact" class="flex flex-row scroll-mt-14">
-				<div class="p-4">
+			<article
+				id="contact"
+				class="flex flex-row scroll-mt-14 my-4 max-w-full w-full overflow-hidden break-words whitespace-normal"
+			>
+				<div class="md:p-4">
 					<h1 class="decoration-yellow-500">Contact Us</h1>
 					<p>
 						For any questions, comments, or concerns, please send an
@@ -209,3 +218,9 @@
 		</section>
 	</section>
 </section>
+
+<style>
+	.splash-area {
+		height: calc(100vh - var(--header-height));
+	}
+</style>
