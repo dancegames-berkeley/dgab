@@ -1,7 +1,5 @@
 name: Deploy DG@B website
 on:
-  schedule:
-  - cron: "0 0 * * *"
   workflow_dispatch: 
   push: 
     branches:
