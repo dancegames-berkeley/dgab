@@ -6,7 +6,8 @@
   import { drawArrows } from "../../lib/drawarrowsbg";
   import { page } from "$app/stores";
 
-  const IMAGES_DIR = "/home/d/dg/dgab/banner";
+  // const IMAGES_DIR = "/home/d/dg/dgab/banner";
+  const IMAGES_DIR = "/nonexistentpath";
 
   interface ChartDetails {
     meter: number;
