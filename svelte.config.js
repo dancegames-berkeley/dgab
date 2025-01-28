@@ -1,7 +1,8 @@
 import adapter from '@sveltejs/adapter-node';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
+import dotenv from 'dotenv';
 
-const socketPath = '/srv/apps/dgab/dgab.sock'
+dotenv.config();
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
