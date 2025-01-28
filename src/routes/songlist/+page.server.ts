@@ -3,6 +3,7 @@ import path from 'path';
 import { env } from '$env/dynamic/private';
 
 const keys = ["BANNER_PATH", "BANNER", "SONGS",  "TITLE", "SUBTITLE", "ARTIST", "CREDIT", "TITLETRANSLIT", "SUBTITLETRANSLIT", "ARTISTTRANSLIT", "GENRE", "CREDIT","BACKGROUND", "PREVIEWVID", "JACKET", "BPMS", "CHARTS", "CHARTNAME", "STEPSTYPE", "DESCRIPTION", "CHARTSTYLE", "DIFFICULTY", "METER"]
+
 function keysToLowerCase(obj: any): any {
     if (typeof obj !== 'object' || obj === null) {
         return obj;

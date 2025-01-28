@@ -5,7 +5,8 @@
   import { onMount } from "svelte";
   import { drawArrows } from "../../lib/drawarrowsbg";
   import { page } from "$app/stores";
-  import { PUBLIC_IMAGES_DIR } from "$env/static/public";
+
+  const IMAGES_DIR = "/home/d/dg/dgab/banner";
 
   interface ChartDetails {
     meter: number;
@@ -76,8 +77,7 @@
 
             // ensure the song banner path is correct
             if (songData["banner_path"] && songData["banner"]) {
-              songData["banner_path"] =
-                `${PUBLIC_IMAGES_DIR}/${songData["banner"]}`;
+              songData["banner_path"] = `${IMAGES_DIR}/${songData["banner"]}`;
             }
 
             const songDetails: SongDetails = {
@@ -95,7 +95,7 @@
 
         // ensure pack banner path is correct
         if (packData["banner"]) {
-          packData["banner"] = `${PUBLIC_IMAGES_DIR}/${packData["banner"]}`;
+          packData["banner"] = `${IMAGES_DIR}/${packData["banner"]}`;
         }
 
         // add song to packs list
