@@ -38,5 +38,6 @@ export async function load() {
         console.error('JSON file path is not defined');
         return { error: 'JSON file path is not defined' };
     }
+    console.log("data: ", data);
     return { packs: data };
 }

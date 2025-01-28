@@ -279,7 +279,7 @@
         Note: the current songlist is a placeholder and it will be up to date
         soon.
       </li>
-      {#each Object.entries(packDict) as [_, packDetails]}
+      {#each Object.entries(packDict).sort( ([, a], [, b]) => a.name.localeCompare(b.name), ) as [_, packDetails]}
         <li class="pack scroll-item font-semibold text-blue-300 text-center">
           <!-- TODO: not critical but might change, was kinda breaking when using enter to just trigger onclick but it would be nice to make it work -->
           <button
