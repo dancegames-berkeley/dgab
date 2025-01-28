@@ -18,6 +18,7 @@ module.exports = {
       },
       fontFamily: {
         sans: ["Montserrat", "sans-serif"],
+        daysone: ["Days One", "sans-serif"],
         montserrat: ['Montserrat', 'sans-serif'],
         inter: ['Inter', 'sans-serif'],
         mochiy: ['Mochiy Pop One', 'sans-serif'],

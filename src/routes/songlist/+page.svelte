@@ -1,13 +1,17 @@
 <script lang="ts">
   // TODO: add search bar and filter by artist, title, difficulty
-  // TODO: maybeeeeeeee add hover/key navigation functionality for right container, for scrolling through difficulties. right now there's just minimal info that's always visible.
+  // TODO: maybe add hover/key navigation functionality for right container, for scrolling through difficulties. right now there's just minimal info that's always visible.
+  // TODO: fix songlist on mobile
   import { onMount } from "svelte";
   import { drawArrows } from "../../lib/drawarrowsbg";
+  import { page } from "$app/stores";
+  import { PUBLIC_IMAGES_DIR } from "$env/static/public";
 
   interface ChartDetails {
     meter: number;
     difficulty: string;
     credit: string;
+    banner_path?: string;
   }
 
   interface SongDetails {
@@ -16,17 +20,20 @@
     artist: string;
     charts: ChartDetails[];
     banner: string;
+    banner_path?: string;
   }
 
   interface PackDetails {
     name: string;
     songs: SongDetails[];
-    banner: string;
+    banner?: string;
   }
 
-  export let data;
+  let packs: { [key: string]: PackDetails };
+  const { packs: initialPacks } = $page.data;
+  packs = initialPacks;
+
   let packDict: { [key: string]: PackDetails } = {};
-  let packs = data.data;
   let openPack: string | null = null; // state variable to track what pack is opened
 
   // left container: pack/song scrolling
@@ -39,6 +46,7 @@
   let focused_song_title: string;
   let focused_song_artist: string;
   let focused_song_charts: ChartDetails[];
+
   try {
     for (const pack in packs) {
       if (packs.hasOwnProperty(pack)) {
@@ -46,28 +54,38 @@
         const packSongs: SongDetails[] = [];
 
         try {
-          for (const song in packData["SONGS"]) {
-            const songData = packData["SONGS"][song];
+          console.log("pack: ", pack);
+          console.log("packdata: ", packData.songs);
+          console.log(typeof packData);
+          for (const song in packData.songs) {
+            console.log("song: ", song);
+            const songData: SongDetails = packData.songs[song];
             const charts: ChartDetails[] = [];
 
             // create a new dictionary to map meter -> difficulty
-            for (const chart in songData["CHARTS"]) {
-              const chartData = songData["CHARTS"][chart];
+            for (const chart of songData.charts) {
+              const chartData = chart;
 
               const chartDetails: ChartDetails = {
-                meter: chartData["METER"],
-                difficulty: chartData["DIFFICULTY"],
-                credit: chartData["CREDIT"],
+                meter: chartData["meter"],
+                difficulty: chartData["difficulty"],
+                credit: chartData["credit"],
               };
               charts.push(chartDetails);
             }
 
+            // ensure the song banner path is correct
+            if (songData["banner_path"] && songData["banner"]) {
+              songData["banner_path"] =
+                `${PUBLIC_IMAGES_DIR}/${songData["banner"]}`;
+            }
+
             const songDetails: SongDetails = {
-              title: songData["TITLE"],
+              title: songData["title"],
               pack: pack,
-              artist: songData["ARTIST"],
+              artist: songData["artist"],
               charts: charts,
-              banner: songData["BANNER_PATH"],
+              banner: songData["banner_path"] || "",
             };
             packSongs.push(songDetails);
           }
@@ -75,12 +93,18 @@
           console.error("Error processing songs: ", e);
         }
 
+        // ensure pack banner path is correct
+        if (packData["banner"]) {
+          packData["banner"] = `${PUBLIC_IMAGES_DIR}/${packData["banner"]}`;
+        }
+
         // add song to packs list
         const packDetails: PackDetails = {
           name: pack,
           songs: packSongs,
-          banner: packData["BANNER_PATH"],
+          banner: packData["banner"],
         };
+        console.log(packDetails.songs);
         packDict[pack] = packDetails;
       }
     }
@@ -157,7 +181,7 @@
     let currentPack = openPack;
     for (const [_, packDetails] of Object.entries(packDict)) {
       if (packDetails.name === childText) {
-        focused_song_image = packDetails.banner;
+        focused_song_image = packDetails.banner || "";
         focused_song_title = packDetails.name;
         focused_song_artist = "";
         focused_song_charts = [];
@@ -211,7 +235,9 @@
     if (event.key === "Enter") {
       if (scrollable[currentIndex].classList.contains("pack")) {
         const pack = scrollable[currentIndex].textContent;
-        handleClick(pack);
+        if (pack) {
+          handleClick(pack);
+        }
       }
     }
   };
@@ -332,14 +358,12 @@
                   >
                     {chart.meter}
                   </p>
-                  <p
-                    class="p-2 mt-1 w-1/3 pl-4 flex items-center justify-start"
-                  >
+                  <p class="p-2 w-1/3 pl-4 flex items-center justify-start">
                     {chart.difficulty}
                   </p>
                   {#if chart.credit}
                     <p
-                      class="p-2 mt-1 hidden md:flex flex-grow items-center justify-end text-slate-500"
+                      class="p-2 hidden md:flex flex-grow items-center justify-end text-slate-500"
                     >
                       {chart.credit}
                     </p>
