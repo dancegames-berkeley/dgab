@@ -293,6 +293,6 @@
 
 <style>
   .content-area {
-    height: calc(100vh - var(--header-height) - var(--footer-height));
+    height: calc(100vh - var(--header-height));
   }
 </style>
