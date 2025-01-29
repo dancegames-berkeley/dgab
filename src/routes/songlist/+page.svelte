@@ -3,39 +3,16 @@
   // TODO: maybe add hover/key navigation functionality for right container, for scrolling through difficulties. right now there's just minimal info that's always visible.
   // TODO: fix songlist on mobile
   import { onMount } from "svelte";
+  import type { ChartDetails, SongDetails, PackDetails } from "./types";
   import { drawArrows } from "../../lib/drawarrowsbg";
-  import { page } from "$app/stores";
+  // import { assetPath } from "../../server.js";
+  import { processData } from "./process_data";
+  import data from "../../../data/assets/songs.json";
 
-  // const IMAGES_DIR = "/home/d/dg/dgab/banner";
-  const IMAGES_DIR = "/nonexistentpath";
+  const IMAGES_DIR = "/banner";
+  let packDict = processData(data);
+  console.log(packDict);
 
-  interface ChartDetails {
-    meter: number;
-    difficulty: string;
-    credit: string;
-    banner_path?: string;
-  }
-
-  interface SongDetails {
-    title: string;
-    pack: string;
-    artist: string;
-    charts: ChartDetails[];
-    banner: string;
-    banner_path?: string;
-  }
-
-  interface PackDetails {
-    name: string;
-    songs: SongDetails[];
-    banner?: string;
-  }
-
-  let packs: { [key: string]: PackDetails };
-  const { packs: initialPacks } = $page.data;
-  packs = initialPacks;
-
-  let packDict: { [key: string]: PackDetails } = {};
   let openPack: string | null = null; // state variable to track what pack is opened
 
   // left container: pack/song scrolling
@@ -48,70 +25,6 @@
   let focused_song_title: string;
   let focused_song_artist: string;
   let focused_song_charts: ChartDetails[];
-
-  try {
-    for (const pack in packs) {
-      if (packs.hasOwnProperty(pack)) {
-        const packData = packs[pack];
-        const packSongs: SongDetails[] = [];
-
-        try {
-          console.log("pack: ", pack);
-          console.log("packdata: ", packData.songs);
-          console.log(typeof packData);
-          for (const song in packData.songs) {
-            console.log("song: ", song);
-            const songData: SongDetails = packData.songs[song];
-            const charts: ChartDetails[] = [];
-
-            // create a new dictionary to map meter -> difficulty
-            for (const chart of songData.charts) {
-              const chartData = chart;
-
-              const chartDetails: ChartDetails = {
-                meter: chartData["meter"],
-                difficulty: chartData["difficulty"],
-                credit: chartData["credit"],
-              };
-              charts.push(chartDetails);
-            }
-
-            // ensure the song banner path is correct
-            if (songData["banner_path"] && songData["banner"]) {
-              songData["banner_path"] = `${IMAGES_DIR}/${songData["banner"]}`;
-            }
-
-            const songDetails: SongDetails = {
-              title: songData["title"],
-              pack: pack,
-              artist: songData["artist"],
-              charts: charts,
-              banner: songData["banner_path"] || "",
-            };
-            packSongs.push(songDetails);
-          }
-        } catch (e) {
-          console.error("Error processing songs: ", e);
-        }
-
-        // ensure pack banner path is correct
-        if (packData["banner"]) {
-          packData["banner"] = `${IMAGES_DIR}/${packData["banner"]}`;
-        }
-
-        // add song to packs list
-        const packDetails: PackDetails = {
-          name: pack,
-          songs: packSongs,
-          banner: packData["banner"],
-        };
-        console.log(packDetails.songs);
-        packDict[pack] = packDetails;
-      }
-    }
-  } catch (e) {
-    console.error("Error processing pack data: ", e);
-  }
 
   // on click show dropdown for all songs in pack
   function handleClick(packName: string) {
@@ -182,18 +95,18 @@
     let currentPack = openPack;
     for (const [_, packDetails] of Object.entries(packDict)) {
       if (packDetails.name === childText) {
-        focused_song_image = packDetails.banner || "";
+        focused_song_image = IMAGES_DIR + "/" + packDetails.banner;
         focused_song_title = packDetails.name;
         focused_song_artist = "";
         focused_song_charts = [];
       }
-      for (const [songName, songDetails] of Object.entries(packDetails.songs)) {
+      for (const [_, songDetails] of Object.entries(packDetails.songs)) {
         if (
           songDetails.title === childText &&
           songDetails.pack === currentPack
         ) {
           focused_song_artist = songDetails.artist;
-          focused_song_image = songDetails.banner;
+          focused_song_image = IMAGES_DIR + "/" + songDetails.banner;
           focused_song_title = songDetails.title;
           focused_song_charts = songDetails.charts;
         }
@@ -325,7 +238,7 @@
         {#if focused_song_image}
           <img
             src={focused_song_image}
-            class="aspect-[2.55] w-full max-w-[750px] z-1"
+            class="aspect-[2.55] w-full max-w-[750px] bg-cover bg-center bg-placeholder flex justify-center items-center text-slate-600 text-xl md:text-3xl z-1"
             alt={focused_song_title}
           />
         {:else}

@@ -1,7 +1,5 @@
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
-import autoprefixer from 'autoprefixer';
-import tailwindcss from 'tailwindcss';
 
 export default defineConfig({
   plugins: [sveltekit()],
@@ -9,6 +7,11 @@ export default defineConfig({
     postcss: './postcss.config.js',
   },
   server: {
-    port: 5173,
-  }
+    proxy: {
+      '/assets': {
+        target: 'https://dancegames.studentorg.berkeley.edu/',
+        changeOrigin: true,
+      }
+    }
+  },
 });
