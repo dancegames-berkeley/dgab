@@ -5,13 +5,12 @@
   import { onMount } from "svelte";
   import type { ChartDetails, SongDetails, PackDetails } from "./types";
   import { drawArrows } from "../../lib/drawarrowsbg";
-  // import { assetPath } from "../../server.js";
   import { processData } from "./process_data";
-  import data from "../../../data/assets/songs.json";
 
   const IMAGES_DIR = "/banner";
-  let packDict = processData(data);
-  console.log(packDict);
+
+  export let data;
+  let packDict = processData(data.data);
 
   let openPack: string | null = null; // state variable to track what pack is opened
 
