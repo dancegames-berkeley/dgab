@@ -9,6 +9,7 @@
   import Song from "./Song.svelte";
 
   const s3Bucket = import.meta.env.VITE_S3_BUCKET;
+  console.log(s3Bucket + "songs.json");
 
   export let data;
   let packDict = processData(data.data);
