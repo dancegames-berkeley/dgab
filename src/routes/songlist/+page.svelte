@@ -2,12 +2,13 @@
   // TODO: add search bar and filter by artist, title, difficulty
   // TODO: maybe add hover/key navigation functionality for right container, for scrolling through difficulties. right now there's just minimal info that's always visible.
   // TODO: fix songlist on mobile
-  import { onMount } from "svelte";
+  import { onMount, onDestroy } from "svelte";
   import type { ChartDetails, SongDetails, PackDetails } from "./types";
   import { drawArrows } from "../../lib/drawarrowsbg";
   import { processData } from "./process_data";
+  import Song from "./Song.svelte";
 
-  const IMAGES_DIR = "/banner";
+  const s3Bucket = import.meta.env.VITE_S3_BUCKET;
 
   export let data;
   let packDict = processData(data.data);
@@ -30,7 +31,6 @@
     openPack = openPack === packName ? null : packName;
     updateScrollable();
   }
-
   // draw arrows background
   // TODO: window resizing works almost all the time but will occasionaly draw arrows on the wrong dimensions and either leave space or overflow (vertically it looks like). i can't seem to reproduce this error. would be nice to fix
   onMount(() => {
@@ -94,7 +94,7 @@
     let currentPack = openPack;
     for (const [_, packDetails] of Object.entries(packDict)) {
       if (packDetails.name === childText) {
-        focused_song_image = IMAGES_DIR + "/" + packDetails.banner;
+        focused_song_image = s3Bucket + packDetails.banner;
         focused_song_title = packDetails.name;
         focused_song_artist = "";
         focused_song_charts = [];
@@ -105,7 +105,7 @@
           songDetails.pack === currentPack
         ) {
           focused_song_artist = songDetails.artist;
-          focused_song_image = IMAGES_DIR + "/" + songDetails.banner;
+          focused_song_image = s3Bucket + songDetails.banner;
           focused_song_title = songDetails.title;
           focused_song_charts = songDetails.charts;
         }
@@ -163,21 +163,6 @@
       updateFocus();
     }
   };
-
-  const sortByDifficulty = (a: ChartDetails, b: ChartDetails) => {
-    const difficultyOrder = [
-      "beginner",
-      "easy",
-      "medium",
-      "hard",
-      "challenge",
-      "edit",
-    ];
-    return (
-      difficultyOrder.indexOf(a.difficulty.toLowerCase()) -
-      difficultyOrder.indexOf(b.difficulty.toLowerCase())
-    );
-  };
 </script>
 
 <section class="flex flex-row content-area">
@@ -223,72 +208,12 @@
       {/each}
     </ul>
   </div>
-  <div
-    id="current song"
-    class="w-1/2 h-full flex items-center bg-darknavy relative"
-  >
-    <canvas id="arrowsbg" class="absolute inset-0 w-full z-0"></canvas>
-    <div
-      class="flex flex-col items-center z-1 relative w-full h-full items-center justify-center"
-    >
-      <div
-        class="bg-navy w-full max-w-[750px] max-h-[750px] flex flex-col items-left"
-      >
-        {#if focused_song_image}
-          <img
-            src={focused_song_image}
-            class="aspect-[2.55] w-full max-w-[750px] bg-cover bg-center bg-placeholder flex justify-center items-center text-slate-600 text-xl md:text-3xl z-1"
-            alt={focused_song_title}
-          />
-        {:else}
-          <div
-            class="aspect-[2.55] w-full max-w-[750px] bg-cover bg-center bg-placeholder flex justify-center items-center text-slate-600 text-xl md:text-3xl z-1"
-          >
-            no banner found
-          </div>
-        {/if}
-        <div class="flex flex-col text-2xl pl-4 pt-4 pr-4 font-miso">
-          {#if focused_song_title}
-            <p class="">
-              <span class="text-slate-500 p-2">TITLE</span>
-              {focused_song_title}
-            </p>
-          {/if}
-          {#if focused_song_artist}
-            <p class="">
-              <span class="text-slate-500 p-2 pt-0">ARTIST</span>
-              {focused_song_artist}
-            </p>
-          {/if}
-          <div
-            class="mt-4 flex flex-col font-miso text-2xl max-h-[300px] overflow-y-auto"
-          >
-            {#if focused_song_charts}
-              {#each focused_song_charts.sort(sortByDifficulty) as chart}
-                <div class="flex flex-row h-16 flex-grow-0">
-                  <p
-                    class="w-12 flex justify-center text-5xl font-wendy text-{chart.difficulty.toLowerCase()}"
-                  >
-                    {chart.meter}
-                  </p>
-                  <p class="p-2 w-1/3 pl-4 flex items-center justify-start">
-                    {chart.difficulty}
-                  </p>
-                  {#if chart.credit}
-                    <p
-                      class="p-2 hidden md:flex flex-grow items-center justify-end text-slate-500"
-                    >
-                      {chart.credit}
-                    </p>
-                  {/if}
-                </div>
-              {/each}
-            {/if}
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <Song
+    {focused_song_title}
+    {focused_song_artist}
+    {focused_song_image}
+    {focused_song_charts}
+  ></Song>
 </section>
 
 <style>

@@ -41,7 +41,7 @@
 			/></a
 		>
 		<div
-			class="hidden md:flex md:items-center md:justify-center ml-auto my-auto h-full"
+			class="hidden md:flex md:items-center md:justify-center ml-auto h-inherit"
 		>
 			<a class="navlink" href="/#about">About</a>
 			<a class="navlink" href="/#queueing">Queueing</a>

@@ -39,7 +39,6 @@ export function processData(packs: any) {
               charts: charts,
               banner: `${sanitizeName(packData["name"])}__${sanitizeName(songData["title"])}.webp`,
             };
-            console.log(songDetails.banner);
             packSongs.push(songDetails);
           }
         } catch (e) {
@@ -52,13 +51,11 @@ export function processData(packs: any) {
           songs: packSongs,
           banner: `${sanitizeName(packData["name"])}.webp`,
         };
-        console.log(packDetails.banner);
         packDict[pack] = packDetails;
       }
     }
   } catch (e) {
     console.error("Error processing pack data: ", e);
   }
-  console.log(packDict);
   return packDict;
 }

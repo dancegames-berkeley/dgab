@@ -71,7 +71,7 @@
 	}
 
 	.navlink {
-		@apply h-full flex items-center px-4 border-b-4 border-transparent transition duration-500 hover:border-blue-500;
+		@apply h-full flex items-center justify-center px-4 border-b-4 border-transparent transition duration-500 hover:border-blue-500;
 	}
 
 	.dropdownlink {
