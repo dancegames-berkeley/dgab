@@ -8,7 +8,7 @@
   import { processData } from "./process_data";
   import Song from "./Song.svelte";
 
-  const s3Bucket = import.meta.env.VITE_S3_BUCKET;
+  const s3Bucket = "https://dancegames.s3.us-west-1.amazonaws.com/";
   console.log(s3Bucket + "songs.json");
 
   export let data;
