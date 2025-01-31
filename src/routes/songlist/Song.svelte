@@ -36,12 +36,12 @@
                 <img
                     loading="lazy"
                     src={focused_song_image}
-                    class="aspect-[2.55] w-full max-w-[750px] bg-cover bg-center bg-placeholder flex justify-center items-center text-slate-600 text-xl md:text-3xl z-1"
+                    class="aspect-[2.55] w-full max-w-[750px] p-4 bg-cover bg-center bg-placeholder flex justify-center items-center text-slate-600 text-xl md:text-3xl z-1"
                     alt={focused_song_title}
                 />
             {:else}
                 <div
-                    class="aspect-[2.55] w-full max-w-[750px] bg-cover bg-center bg-placeholder flex justify-center items-center text-slate-600 text-xl md:text-3xl z-1"
+                    class="aspect-[2.55] w-full max-w-[750px] p-4 bg-cover bg-center bg-placeholder flex justify-center items-center text-slate-600 text-xl md:text-3xl z-1"
                 >
                     no banner found
                 </div>
