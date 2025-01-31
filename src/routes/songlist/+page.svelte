@@ -212,12 +212,14 @@
       {/each}
     </ul>
   </div>
-  <Song
-    {focused_song_title}
-    {focused_song_artist}
-    {focused_song_image}
-    {focused_song_charts}
-  ></Song>
+  {#if currentIndex >= 0}
+    <Song
+      {focused_song_title}
+      {focused_song_artist}
+      {focused_song_image}
+      {focused_song_charts}
+    ></Song>
+  {/if}
 </section>
 
 <style>
