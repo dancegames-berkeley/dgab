@@ -1,14 +1,17 @@
 <script lang="ts">
-  // TODO: add search bar and filter by artist, title, difficulty
+  // TODO: add search bar
+  // TODO: add options to toggle singles/doubles mode, sort by artist, title etc.
   // TODO: maybe add hover/key navigation functionality for right container, for scrolling through difficulties. right now there's just minimal info that's always visible.
   // TODO: fix songlist CSS on mobile :(
   // TOOD: add a loading spinner for when the song data is being fetched
-  import { onMount, onDestroy } from "svelte";
+  // TODO: componentize
+  import { onMount } from "svelte";
   import type { ChartDetails, SongDetails, PackDetails } from "./types";
   import { drawArrows } from "../../lib/drawarrowsbg";
   import { processData } from "./process_data";
   import Song from "./Song.svelte";
 
+  // i don't mind if this is public rn, could reconsider later
   const s3Bucket = "https://dancegames.s3.us-west-1.amazonaws.com/";
 
   export let data;
