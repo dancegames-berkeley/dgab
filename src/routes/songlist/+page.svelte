@@ -105,7 +105,7 @@
           songDetails.pack === currentPack
         ) {
           focused_song_artist = songDetails.artist;
-          // focused_song_image = s3Bucket + songDetails.banner;
+          focused_song_image = songDetails.banner;
           focused_song_title = songDetails.title;
           focused_song_charts = songDetails.charts;
         }
