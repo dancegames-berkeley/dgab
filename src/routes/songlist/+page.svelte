@@ -1,7 +1,8 @@
 <script lang="ts">
   // TODO: add search bar and filter by artist, title, difficulty
   // TODO: maybe add hover/key navigation functionality for right container, for scrolling through difficulties. right now there's just minimal info that's always visible.
-  // TODO: fix songlist on mobile
+  // TODO: fix songlist CSS on mobile :(
+  // TOOD: add a loading spinner for when the song data is being fetched
   import { onMount, onDestroy } from "svelte";
   import type { ChartDetails, SongDetails, PackDetails } from "./types";
   import { drawArrows } from "../../lib/drawarrowsbg";
@@ -172,10 +173,10 @@
     bind:this={listContainer}
   >
     <ul>
-      <li class="font-semibold text-darknavy text-center bg-yellow-500">
+      <!-- <li class="font-semibold text-darknavy text-center bg-yellow-500">
         Note: the current songlist is a placeholder and it will be up to date
         soon.
-      </li>
+      </li> -->
       {#each Object.entries(packDict).sort( ([, a], [, b]) => a.name.localeCompare(b.name), ) as [_, packDetails]}
         <li class="pack scroll-item font-semibold text-blue-300 text-center">
           <!-- TODO: not critical but might change, was kinda breaking when using enter to just trigger onclick but it would be nice to make it work -->

@@ -24,6 +24,7 @@
 	});
 
 	// handle mobile menu
+	// TODO: make mobile menu look metter
 	let isMenuOpen = false;
 
 	function toggleMenu() {
