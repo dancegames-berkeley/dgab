@@ -1,8 +1,8 @@
-const s3Bucket = import.meta.env.VITE_S3_BUCKET;
+
 export const load = async ({ fetch }) => {
     try {
-        console.log(s3Bucket + 'songs.json');
-        const response = await fetch('https://dancegames.studentorg.berkeley.edu/' + 'songs.json');
+        const s3Bucket = "https://dancegames.s3.us-west-1.amazonaws.com/";
+        const response = await fetch(s3Bucket + 'songs.json');
         if (!response.ok) {
             throw new Error(`HTTP error: ${response.status}`);
         }
