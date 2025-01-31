@@ -8,8 +8,7 @@
   import { processData } from "./process_data";
   import Song from "./Song.svelte";
 
-  const s3Bucket = import.meta.env.VITE_S3_BUCKET;
-  console.log(s3Bucket + "songs.json");
+  const s3Bucket = "https://dancegames.s3.us-west-1.amazonaws.com/";
 
   export let data;
   let packDict = processData(data.data);
@@ -106,7 +105,7 @@
           songDetails.pack === currentPack
         ) {
           focused_song_artist = songDetails.artist;
-          focused_song_image = s3Bucket + songDetails.banner;
+          // focused_song_image = s3Bucket + songDetails.banner;
           focused_song_title = songDetails.title;
           focused_song_charts = songDetails.charts;
         }
