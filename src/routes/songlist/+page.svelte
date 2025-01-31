@@ -98,7 +98,7 @@
     let currentPack = openPack;
     for (const [_, packDetails] of Object.entries(packDict)) {
       if (packDetails.name === childText) {
-        focused_song_image = s3Bucket + packDetails.banner;
+        focused_song_image = "/banner/" + packDetails.banner;
         focused_song_title = packDetails.name;
         focused_song_artist = "";
         focused_song_charts = [];
