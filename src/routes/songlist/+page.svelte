@@ -11,9 +11,6 @@
   import { processData } from "./process_data";
   import Song from "./Song.svelte";
 
-  // i don't mind if this is public rn, could reconsider later
-  const s3Bucket = "https://dancegames.s3.us-west-1.amazonaws.com/";
-
   export let data;
   let packDict = processData(data.data);
 
@@ -98,7 +95,7 @@
     let currentPack = openPack;
     for (const [_, packDetails] of Object.entries(packDict)) {
       if (packDetails.name === childText) {
-        focused_song_image = packDetails.banner;
+        focused_song_image = packDetails.banner || "";
         focused_song_title = packDetails.name;
         focused_song_artist = "";
         focused_song_charts = [];

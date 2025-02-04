@@ -1,6 +1,5 @@
 import type { PackDetails, SongDetails, ChartDetails } from "./types";
 
-// Your existing code...
 function sanitizeName(name: string) {
   name = name.replace(/ /g, '_');
   name = name.replace(/[^a-zA-Z0-9_\-]/g, '');
