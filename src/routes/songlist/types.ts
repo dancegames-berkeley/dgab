@@ -17,3 +17,10 @@ export interface PackDetails {
     songs: SongDetails[];
     banner?: string;
 }
+
+export interface FocusedSong {
+    title: string;
+    artist: string;
+    banner: string;
+    charts: ChartDetails[];
+}

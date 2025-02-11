@@ -1,10 +1,7 @@
 <script lang="ts">
-    import type { ChartDetails, SongDetails, PackDetails } from "./types";
-    export let focused_song_image;
-    export let focused_song_title;
-    export let focused_song_artist;
-    export let focused_song_charts;
-
+    import type { ChartDetails } from "./types";
+    export let focusedSong
+    
     const sortByDifficulty = (a: ChartDetails, b: ChartDetails) => {
         const difficultyOrder = [
             "beginner",
@@ -32,38 +29,38 @@
         <div
             class="bg-navy w-full max-w-[750px] max-h-[750px] flex flex-col items-left"
         >
-            {#if focused_song_image}
+            {#if focusedSong.banner}
                 <img
                     loading="lazy"
-                    src={focused_song_image}
+                    src={focusedSong.banner}
                     class="aspect-[2.55] w-full max-w-[750px] bg-cover bg-center bg-placeholder flex justify-center items-center text-slate-600 text-xl md:text-3xl z-1"
-                    alt={focused_song_title}
+                    alt={focusedSong.title}
                 />
             {:else}
                 <div
-                    class="aspect-[2.55] w-full max-w-[750px] p-4 bg-cover bg-center bg-placeholder flex justify-center items-center text-slate-600 text-xl md:text-3xl z-1"
+                    class="aspect-[2.55] w-full max-w-[750px] bg-cover bg-center bg-placeholder flex justify-center items-center text-slate-600 text-xl md:text-3xl z-1"
                 >
                     no banner found
                 </div>
             {/if}
             <div class="flex flex-col text-2xl pl-4 pt-4 pr-4 font-miso">
-                {#if focused_song_title}
+                {#if focusedSong.title}
                     <p class="">
                         <span class="text-slate-500 p-2">TITLE</span>
-                        {focused_song_title}
+                        {focusedSong.title}
                     </p>
                 {/if}
-                {#if focused_song_artist}
+                {#if focusedSong.artist}
                     <p class="">
                         <span class="text-slate-500 p-2 pt-0">ARTIST</span>
-                        {focused_song_artist}
+                        {focusedSong.artist}
                     </p>
                 {/if}
                 <div
                     class="mt-4 flex flex-col font-miso text-2xl max-h-[300px] overflow-y-auto"
                 >
-                    {#if focused_song_charts}
-                        {#each focused_song_charts.sort(sortByDifficulty) as chart}
+                    {#if focusedSong.charts}
+                        {#each focusedSong.charts.sort(sortByDifficulty) as chart}
                             <div class="flex flex-row h-16 flex-grow-0">
                                 <p
                                     class="w-12 flex justify-center text-5xl font-wendy text-{chart.difficulty.toLowerCase()}"
