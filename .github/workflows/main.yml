@@ -14,7 +14,14 @@ jobs:
         with:
           node-version: latest
       - run: npm install
-      - run: npm run build
+      - name: build app
+        run: npm run build
+        
+        env:
+          VITE_AWS_ACCESS_KEY_ID: ${{ secrets.VITE_AWS_ACCESS_KEY_ID }}
+          VITE_AWS_SECRET_ACCESS_KEY: ${{ secrets.VITE_AWS_SECRET_ACCESS_KEY }}
+          VITE_AWS_REGION: ${{ secrets.VITE_AWS_REGION }}
+          VITE_AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
       - name: copy build to application server
         uses: appleboy/scp-action@v0.1.7
         with:
