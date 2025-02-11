@@ -1,7 +1,8 @@
 <script lang="ts">
-    import type { ChartDetails } from "./types";
+    import type { ChartDetails, FocusedSong } from "./types";
+
     export let focusedSong
-    
+
     const sortByDifficulty = (a: ChartDetails, b: ChartDetails) => {
         const difficultyOrder = [
             "beginner",

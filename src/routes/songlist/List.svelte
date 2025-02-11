@@ -1,6 +1,9 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import type { PackDetails, FocusedSong } from "./types";
+    import { S3Client, GetObjectCommand, CreateSessionCommand, SessionMode, ServerSideEncryption } from "@aws-sdk/client-s3";
+    import { create } from "node:domain";
+
 
     export let currentIndex: number;
     export let focusedSong: FocusedSong;
@@ -9,6 +12,57 @@
     let listContainer: HTMLElement;
     let scrollable: HTMLElement[] = [];
     let openPack: string | null = null; // state variable to track what pack is opened
+
+    const REGION = import.meta.env.VITE_AWS_REGION;
+    const BUCKET_NAME = import.meta.env.VITE_AWS_BUCKET_NAME;
+
+    const s3Client = new S3Client({
+        region: REGION,
+        credentials: {
+            accessKeyId: import.meta.env.VITE_AWS_ACCESS_KEY_ID,
+            secretAccessKey: import.meta.env.VITE_AWS_SECRET_ACCESS_KEY
+        }
+    });
+
+    async function fetchImage(banner: string): Promise<string | undefined> {
+        console.log("Fetching image:", banner);
+        try {
+            const command = new GetObjectCommand({
+                Bucket: BUCKET_NAME,
+                Key: banner,
+            });
+
+            console.log("Sending command to S3:", command);
+            const response = await s3Client.send(command);
+            console.log("Received response from S3:", response);
+            if (response.Body) {
+                const reader = await response.Body.getReader();
+                const stream = new ReadableStream({
+                    start(controller) {
+                        function push() {
+                            reader.read().then(({ done, value }) => {
+                                if (done) {
+                                    controller.close();
+                                    return;
+                                }
+                                controller.enqueue(value);
+                                push();
+                            });
+                        }
+                        push();
+                    },
+                })
+                const blob = await new Response(stream).blob();
+                return URL.createObjectURL(blob);
+            } else {
+                console.log("Error: response.Body is undefined");
+                return "";
+            }
+        } catch (error) {
+            console.log("Error fetching image:", error);
+            return "";
+        }
+    }
 
     onMount(() => {
         try {
@@ -42,7 +96,7 @@
     });
 
     // updates CSS to show focus on the current element
-    function updateFocus() {
+    async function updateFocus() {
         scrollable.forEach((div, index) => {
             if (index === currentIndex) {
                 div.classList.add("focused");
@@ -52,7 +106,7 @@
         });
         // handle current song sidebar
         // get songdetails of current song by iterating through packDict
-        let focused_song = document.querySelector(".focused");
+        let focused_song = document.querySelector(".focused"); 
         let childText =
             focused_song && focused_song.firstElementChild
                 ? focused_song.firstElementChild.textContent
@@ -60,20 +114,22 @@
         let currentPack = openPack;
         for (const [_, packDetails] of Object.entries(packDict)) {
             if (packDetails.name === childText) {
-                focusedSong.banner = packDetails.banner || "";
+                focusedSong.banner = (await fetchImage(packDetails.banner || "")) || "";
                 focusedSong.title = packDetails.name;
                 focusedSong.artist = "";
                 focusedSong.charts = [];
+                console.log("Focused song:", focusedSong);
             }
             for (const [_, songDetails] of Object.entries(packDetails.songs)) {
                 if (
                     songDetails.title === childText &&
                     songDetails.pack === currentPack
                 ) {
-                    focusedSong.banner = songDetails.banner;
+                    focusedSong.banner = (await fetchImage(songDetails.banner || "")) || "";
                     focusedSong.title = songDetails.title;
                     focusedSong.artist = songDetails.artist;
                     focusedSong.charts = songDetails.charts;
+                    console.log("Focused song:", focusedSong);
                 }
             }
         }
