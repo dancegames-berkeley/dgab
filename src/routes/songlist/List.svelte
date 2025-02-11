@@ -1,9 +1,7 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import type { PackDetails, FocusedSong } from "./types";
-    import { S3Client, GetObjectCommand, CreateSessionCommand, SessionMode, ServerSideEncryption } from "@aws-sdk/client-s3";
-    import { create } from "node:domain";
-
+    import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 
     export let currentIndex: number;
     export let focusedSong: FocusedSong;
@@ -23,6 +21,26 @@
             secretAccessKey: import.meta.env.VITE_AWS_SECRET_ACCESS_KEY
         }
     });
+    
+    const readImage = async (stream: ReadableStream): Promise<Blob> => {
+        const reader = stream.getReader();
+        const readableStream = new ReadableStream({
+            start(controller) {
+                function push() {
+                    reader.read().then(({ done, value }) => {
+                        if (done) {
+                            controller.close();
+                            return;
+                        }
+                        controller.enqueue(value);
+                        push();
+                    });
+                }
+                push();
+            },
+        });
+        return await new Response(readableStream).blob();
+    };
 
     async function fetchImage(banner: string): Promise<string | undefined> {
         console.log("Fetching image:", banner);
@@ -35,24 +53,9 @@
             console.log("Sending command to S3:", command);
             const response = await s3Client.send(command);
             console.log("Received response from S3:", response);
+            // read stream and convert to blob
             if (response.Body) {
-                const reader = await response.Body.getReader();
-                const stream = new ReadableStream({
-                    start(controller) {
-                        function push() {
-                            reader.read().then(({ done, value }) => {
-                                if (done) {
-                                    controller.close();
-                                    return;
-                                }
-                                controller.enqueue(value);
-                                push();
-                            });
-                        }
-                        push();
-                    },
-                })
-                const blob = await new Response(stream).blob();
+                const blob = await readImage(response.Body as ReadableStream);
                 return URL.createObjectURL(blob);
             } else {
                 console.log("Error: response.Body is undefined");
