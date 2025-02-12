@@ -122,7 +122,7 @@
                 focusedSong.title = packDetails.name;
                 focusedSong.artist = "";
                 focusedSong.charts = [];
-                console.log("Focused song:", focusedSong);
+                break
             }
             for (const [_, songDetails] of Object.entries(packDetails.songs)) {
                 if (
@@ -134,7 +134,7 @@
                     focusedSong.title = songDetails.title;
                     focusedSong.artist = songDetails.artist;
                     focusedSong.charts = songDetails.charts;
-                    console.log("Focused song:", focusedSong);
+                    break
                 }
             }
         }
