@@ -17,6 +17,7 @@ const BUCKET_NAME = import.meta.env.VITE_AWS_BUCKET_NAME;
 export const load = async ({ fetch, setHeaders }) => {
     setHeaders({ 'cache-control': 'public, max-age=3600' }); // cache client-side for 1 hour
     client.get('songs', (error: Error, value: any) => {
+        console.log('getting from cache');
         if (error) {
             console.error(error);
         } else {
@@ -30,6 +31,7 @@ export const load = async ({ fetch, setHeaders }) => {
     });
     client.end();
     try {
+        console.log("failed to get from cache, fetching from server");
         const response = await fetch('https://dancegames.studentorg.berkeley.edu/' + 'songs.json');
         if (!response.ok) {
             throw new Error(`HTTP error: ${response.status}`);
@@ -37,6 +39,7 @@ export const load = async ({ fetch, setHeaders }) => {
         const data = await response.json();
         // cache server-side for 1 day
         client.set('songs', JSON.stringify(data), 86400, (error: Error, result: Boolean) => {
+            console.log('setting cache');
             if (error) {
                 console.error(error);
             } else {
@@ -44,6 +47,7 @@ export const load = async ({ fetch, setHeaders }) => {
             }
         });
         client.end();
+        console.log(data);
         return { data };
     } catch (error) {
         throw new Error(`Error: ${error}`);
