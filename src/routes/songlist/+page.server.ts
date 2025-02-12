@@ -2,6 +2,7 @@ import Memcached from 'memcached';
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 import { Readable } from 'stream';
 
+
 const client = new Memcached('https://dancegames.studentorg.berkeley.edu/');
 
 const REGION = import.meta.env.VITE_AWS_REGION;
@@ -15,17 +16,10 @@ const s3Client = new S3Client({
     }
 });
 
-const processStream = async (stream: Readable): Promise<string> => {
-    const chunks: Uint8Array[] = [];
-    for await (const chunk of stream) {
-        chunks.push(chunk);
-    }
-    return Buffer.concat(chunks).toString('utf-8');
-};
-
 export const load = async ({ fetch, setHeaders }) => {
     setHeaders({ 'cache-control': 'public, max-age=3600' }); // cache client-side for 1 hour
     client.get('songs', (error: Error, value: any) => {
+        console.log('getting from cache');
         if (error) {
             console.error(error);
         } else {
@@ -39,22 +33,23 @@ export const load = async ({ fetch, setHeaders }) => {
     });
     client.end();
     try {
-        // fetch from S3 if not in cache
-        const response = await s3Client.send(new GetObjectCommand({ Bucket: BUCKET_NAME, Key: 'songs.json' }));
-        const stream = response.Body;
-        if (!stream) {
-            throw new Error('No stream returned from S3');
+        console.log("failed to get from cache, fetching from server");
+        const response = await fetch('https://dancegames.studentorg.berkeley.edu/' + 'songs.json');
+        if (!response.ok) {
+            throw new Error(`HTTP error: ${response.status}`);
         }
-        const streamData = await processStream(stream);
-        const data = JSON.parse(streamData);
-
+        const data = await response.json();
         // cache server-side for 1 day
         client.set('songs', JSON.stringify(data), 86400, (error: Error, result: Boolean) => {
+            console.log('setting cache');
             if (error) {
                 console.error(error);
+            } else {
+                console.log(result);
             }
         });
         client.end();
+        console.log(data);
         return { data };
     } catch (error) {
         throw new Error(`Error: ${error}`);
