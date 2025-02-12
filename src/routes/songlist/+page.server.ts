@@ -9,13 +9,13 @@ const REGION = import.meta.env.VITE_AWS_REGION;
 const BUCKET_NAME = import.meta.env.VITE_AWS_BUCKET_NAME;
 console.log(REGION, BUCKET_NAME);
 
-const s3Client = new S3Client({
-    region: REGION,
-    credentials: {
-        accessKeyId: import.meta.env.VITE_AWS_ACCESS_KEY_ID,
-        secretAccessKey: import.meta.env.VITE_AWS_SECRET_ACCESS_KEY
-    }
-});
+// const s3Client = new S3Client({
+//     region: REGION,
+//     credentials: {
+//         accessKeyId: import.meta.env.VITE_AWS_ACCESS_KEY_ID,
+//         secretAccessKey: import.meta.env.VITE_AWS_SECRET_ACCESS_KEY
+//     }
+// });
 
 export const load = async ({ fetch, setHeaders }) => {
     setHeaders({ 'cache-control': 'public, max-age=3600' }); // cache client-side for 1 hour
