@@ -1,4 +1,4 @@
-// import Memcached from 'memcached';
+import Memcached from 'memcached';
 // import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 
 // const client = new Memcached('https://dancegames.studentorg.berkeley.edu/');
