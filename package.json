@@ -3,7 +3,6 @@
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
-		"prepare": "npm install",
 		"start": "node src/server.js",
 		"dev": "vite dev",
 		"build": "vite build",
