@@ -2,55 +2,61 @@ import Memcached from 'memcached';
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 import { Readable } from 'stream';
 
-
-const client = new Memcached('https://dancegames.studentorg.berkeley.edu/');
+// const client = new Memcached('https://dancegames.studentorg.berkeley.edu/');
 
 const REGION = import.meta.env.VITE_AWS_REGION;
 const BUCKET_NAME = import.meta.env.VITE_AWS_BUCKET_NAME;
-console.log(REGION, BUCKET_NAME);
 
-// const s3Client = new S3Client({
-//     region: REGION,
-//     credentials: {
-//         accessKeyId: import.meta.env.VITE_AWS_ACCESS_KEY_ID,
-//         secretAccessKey: import.meta.env.VITE_AWS_SECRET_ACCESS_KEY
-//     }
-// });
+const s3Client = new S3Client({
+    region: REGION,
+    credentials: {
+        accessKeyId: import.meta.env.VITE_AWS_ACCESS_KEY_ID,
+        secretAccessKey: import.meta.env.VITE_AWS_SECRET_ACCESS_KEY
+    }
+});
+
+const processStream = async (stream: Readable): Promise<string> => {
+    const chunks: Uint8Array[] = [];
+    for await (const chunk of stream) {
+        chunks.push(chunk);
+    }
+    return Buffer.concat(chunks).toString('utf-8');
+};
 
 export const load = async ({ fetch, setHeaders }) => {
     setHeaders({ 'cache-control': 'public, max-age=3600' }); // cache client-side for 1 hour
-    client.get('songs', (error: Error, value: any) => {
-        console.log('getting from cache');
-        if (error) {
-            console.error(error);
-        } else {
-            if (value === null) {
-                throw new Error('No value found in cache');
-            }
-            const data = JSON.parse(value);
-            console.log(data);
-            return { data };
-        }
-    });
-    client.end();
+    // console.log("try to fetch from cache")
+    // client.get('songs', (error: Error, value: any) => {
+    //     if (error) {
+    //         console.error(error);
+    //     } else {
+    //         if (value === null) {
+    //             throw new Error('No value found in cache');
+    //         }
+    //         const data = JSON.parse(value);
+    //         console.log(data);
+    //         return { data };
+    //     }
+    // });
+    // client.end();
     try {
-        console.log("failed to get from cache, fetching from server");
-        const response = await fetch('https://dancegames.studentorg.berkeley.edu/' + 'songs.json');
-        if (!response.ok) {
-            throw new Error(`HTTP error: ${response.status}`);
+        // fetch from S3 if not in cache
+        console.log("fetch from s3")
+        const response = await s3Client.send(new GetObjectCommand({ Bucket: BUCKET_NAME, Key: 'songs.json' }));
+        const stream = response.Body;
+        if (!stream) {
+            throw new Error('No stream returned from S3');
         }
-        const data = await response.json();
+        const streamData = await processStream(stream);
+        const data = JSON.parse(streamData);
+
         // cache server-side for 1 day
-        client.set('songs', JSON.stringify(data), 86400, (error: Error, result: Boolean) => {
-            console.log('setting cache');
-            if (error) {
-                console.error(error);
-            } else {
-                console.log(result);
-            }
-        });
-        client.end();
-        console.log(data);
+        // client.set('songs', JSON.stringify(data), 86400, (error: Error, result: Boolean) => {
+        //     if (error) {
+        //         console.error(error);
+        //     }
+        // });
+        // client.end();
         return { data };
     } catch (error) {
         throw new Error(`Error: ${error}`);
