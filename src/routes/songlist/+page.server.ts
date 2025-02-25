@@ -1,8 +1,10 @@
 import Memcached from 'memcached';
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 import { Readable } from 'stream';
+import zlib from 'zlib';
+import { Client } from 'memjs';
 
-// const client = new Memcached('https://dancegames.studentorg.berkeley.edu/');
+const memcached = Client.create();
 
 const REGION = import.meta.env.VITE_AWS_REGION;
 const BUCKET_NAME = import.meta.env.VITE_AWS_BUCKET_NAME;
@@ -23,25 +25,9 @@ const processStream = async (stream: Readable): Promise<string> => {
     return Buffer.concat(chunks).toString('utf-8');
 };
 
-export const load = async ({ fetch, setHeaders }) => {
-    setHeaders({ 'cache-control': 'public, max-age=3600' }); // cache client-side for 1 hour
-    // console.log("try to fetch from cache")
-    // client.get('songs', (error: Error, value: any) => {
-    //     if (error) {
-    //         console.error(error);
-    //     } else {
-    //         if (value === null) {
-    //             throw new Error('No value found in cache');
-    //         }
-    //         const data = JSON.parse(value);
-    //         console.log(data);
-    //         return { data };
-    //     }
-    // });
-    // client.end();
+
+const fetchFromS3 = async () => {
     try {
-        // fetch from S3 if not in cache
-        console.log("fetch from s3")
         const response = await s3Client.send(new GetObjectCommand({ Bucket: BUCKET_NAME, Key: 'songs.json' }));
         const stream = response.Body;
         if (!stream) {
@@ -49,16 +35,46 @@ export const load = async ({ fetch, setHeaders }) => {
         }
         const streamData = await processStream(stream);
         const data = JSON.parse(streamData);
+        const compressedData = zlib.gzipSync(Buffer.from(JSON.stringify(data), 'utf-8'));
 
         // cache server-side for 1 day
-        // client.set('songs', JSON.stringify(data), 86400, (error: Error, result: Boolean) => {
-        //     if (error) {
-        //         console.error(error);
-        //     }
-        // });
-        // client.end();
-        return { data };
+        await memcached.set('songs', compressedData, { expires: 86400 });
+        return data;
     } catch (error) {
         throw new Error(`Error: ${error}`);
     }
+};
+
+
+const verifyCache = async (key: string) => {
+    return new Promise((resolve, reject) => {
+        memcached.get(key, async (err, val) => {
+            if (err) return reject(err);
+            if (val !== null) {
+                const decompressedData = zlib.gunzipSync(val).toString('utf-8');
+                const data = JSON.parse(decompressedData);
+                resolve(data);
+            } else {
+                const data = await fetchFromS3();
+                resolve(data);
+            }
+        });
+    });
+};
+
+// Used for testing
+const flushCache = async () => {
+    memcached.flush((err, success) => {
+        if (err) {
+        console.error('Error flushing cache:', err);
+        } else {
+        console.log('Cache flushed successfully:', success);
+        }
+    });
+};
+
+export const load = async ({ fetch, setHeaders }: { fetch: Function, setHeaders: (headers: Record<string, string>) => void }) => {
+    setHeaders({ 'cache-control': 'public, max-age=3600' }); // cache client-side for 1 hour
+    const data = await verifyCache("songs");
+    return { data };
 };
