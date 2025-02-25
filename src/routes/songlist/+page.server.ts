@@ -4,7 +4,7 @@ import { Readable } from 'stream';
 import zlib from 'zlib';
 import { Client } from 'memjs';
 
-const memcached = Client.create();
+const memcached = Client.create("https://dancegames.studentorg.berkeley.edu");
 
 const REGION = import.meta.env.VITE_AWS_REGION;
 const BUCKET_NAME = import.meta.env.VITE_AWS_BUCKET_NAME;
