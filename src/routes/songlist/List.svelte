@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import type { PackDetails, FocusedSong } from "./types";
+    import type { PackDetails, SongDetails, FocusedSong } from "./types";
     import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 
     export let currentIndex: number;
@@ -18,10 +18,10 @@
         region: REGION,
         credentials: {
             accessKeyId: import.meta.env.VITE_AWS_ACCESS_KEY_ID,
-            secretAccessKey: import.meta.env.VITE_AWS_SECRET_ACCESS_KEY
-        }
+            secretAccessKey: import.meta.env.VITE_AWS_SECRET_ACCESS_KEY,
+        },
     });
-    
+
     const readImage = async (stream: ReadableStream): Promise<Blob> => {
         const reader = stream.getReader();
         const readableStream = new ReadableStream({
@@ -43,16 +43,13 @@
     };
 
     async function fetchImage(banner: string): Promise<string | undefined> {
-        console.log("Fetching image:", banner);
         try {
             const command = new GetObjectCommand({
                 Bucket: BUCKET_NAME,
                 Key: banner,
             });
 
-            console.log("Sending command to S3:", command);
             const response = await s3Client.send(command);
-            console.log("Received response from S3:", response);
             // read stream and convert to blob
             if (response.Body) {
                 const blob = await readImage(response.Body as ReadableStream);
@@ -72,7 +69,8 @@
             // keyboard navigation
             window.addEventListener("keydown", handleKeydown);
             window.addEventListener("keydown", handleEnter);
-            window.addEventListener("mousemove", handleHover);
+            listContainer.addEventListener("mousemove", handleHover);
+
             // find all scrollable items on mount
             updateScrollable();
 
@@ -85,6 +83,7 @@
 
             // highlight the first element on mount
             if (scrollable.length > 0) {
+                currentIndex = 0;
                 scrollable[currentIndex].classList.add("focused");
             }
 
@@ -99,49 +98,31 @@
     });
 
     // updates CSS to show focus on the current element
-    async function updateFocus() {
-        scrollable.forEach((div, index) => {
-            if (index === currentIndex) {
-                div.classList.add("focused");
-            } else {
-                div.classList.remove("focused");
-            }
-        });
-        // handle current song sidebar
-        // get songdetails of current song by iterating through packDict
-        let focused_song = document.querySelector(".focused"); 
-        let childText =
-            focused_song && focused_song.firstElementChild
-                ? focused_song.firstElementChild.textContent
+    async function updateFocus(
+        focusedData: PackDetails | SongDetails,
+        type: string,
+    ) {
+        if (type == "pack") {
+            focusedSong.title = focusedData?.name;
+            focusedSong.banner = focusedData.banner
+                ? await fetchImage(focusedData.banner || "")
                 : "";
-        let currentPack = openPack;
-        for (const [_, packDetails] of Object.entries(packDict)) {
-            if (packDetails.name === childText) {
-                focusedSong.banner = (await fetchImage(packDetails.banner || "")) || "";
-                focusedSong.title = packDetails.name;
-                focusedSong.artist = "";
-                focusedSong.charts = [];
-                break
-            }
-            for (const [_, songDetails] of Object.entries(packDetails.songs)) {
-                if (
-                    songDetails.title === childText &&
-                    songDetails.pack === currentPack
-                ) {
-                    focusedSong.banner = (await fetchImage(songDetails.banner || "")) || "";
-                    focusedSong.title = songDetails.title;
-                    focusedSong.artist = songDetails.artist;
-                    focusedSong.charts = songDetails.charts;
-                    break
-                }
-            }
+            focusedSong.artist = "";
+            focusedSong.charts = [];
+        } else if (type == "song") {
+            focusedSong.title = focusedData?.title || "";
+            console.log(focusedData.banner);
+            focusedSong.banner = focusedData.banner
+                ? await fetchImage(focusedData.banner || "")
+                : "";
+            focusedSong.artist = focusedData?.artist || "";
+            focusedSong.charts = focusedData?.charts || [];
         }
     }
 
     // on click show dropdown for all songs in pack
     function handleClick(packName: string) {
         openPack = openPack === packName ? null : packName;
-        updateScrollable();
     }
 
     // updates scrollable items
@@ -153,25 +134,31 @@
     };
 
     // handle keyboard navigation through packs/songs
+    // code is brain
     const handleKeydown = (event: KeyboardEvent) => {
-        if (scrollable.length > 0) {
-            if (event.key === "ArrowDown") {
-                currentIndex = (currentIndex + 1) % scrollable.length;
-                updateFocus();
-                scrollable[currentIndex].scrollIntoView({
-                    behavior: "smooth",
-                    block: "center",
-                });
-            } else if (event.key === "ArrowUp") {
-                currentIndex =
-                    (currentIndex - 1 + scrollable.length) % scrollable.length;
-                updateFocus();
-                scrollable[currentIndex].scrollIntoView({
-                    behavior: "smooth",
-                    block: "center",
-                });
-            }
+        if (scrollable.length === 0) {
+            return;
         }
+        if (event.key === "ArrowDown") {
+            currentIndex = (currentIndex + 1) % scrollable.length;
+        } else if (event.key === "ArrowUp") {
+            currentIndex =
+                (currentIndex - 1 + scrollable.length) % scrollable.length;
+        }
+        event.preventDefault();
+        handleNavigation();
+        if (currentIndex < 10) {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+        let block: ScrollLogicalPosition = "center";
+        if (currentIndex < 10 || currentIndex > scrollable.length - 10) {
+            block = "nearest";
+        }
+        scrollable[currentIndex].scrollIntoView({
+            behavior: "smooth",
+            block: block,
+            inline: "start",
+        });
     };
 
     // handle enter key to select pack
@@ -186,19 +173,55 @@
         }
     };
 
-    const handleHover = (event: MouseEvent) => {
-        if (scrollable.length > 0) {
-            currentIndex = scrollable.findIndex((div) =>
-                div.contains(event.target as Node),
-            );
-            updateFocus();
+    async function handleNavigation() {
+        if (scrollable.length === 0) {
+            return;
         }
+        // get div that is currently hovered on and add 'focused' styling
+        scrollable.forEach((div, index) => {
+            if (currentIndex < 0) {
+                return;
+            } else if (index === currentIndex) {
+                div.classList.add("focused");
+            } else {
+                div.classList.remove("focused");
+            }
+        });
+        // get text of hovered element
+        let focusedElement = document.querySelector(".focused");
+        let songName = focusedElement?.firstElementChild
+            ? focusedElement?.firstElementChild.textContent
+            : "";
+        let currentPack = focusedElement?.textContent;
+        // get song details of hovered element
+        if (openPack && songName && songName !== openPack) {
+            let focusedData = packDict[openPack].songs[songName];
+            if (focusedData) {
+                updateFocus(focusedData, "song");
+            }
+        } else if (currentPack) {
+            let focusedData = packDict[currentPack];
+            if (focusedData) {
+                updateFocus(focusedData, "pack");
+            }
+        }
+    }
+
+    const handleHover = (event: MouseEvent) => {
+        if (scrollable.length === 0) {
+            return;
+        }
+        // update current index on hover
+        currentIndex = scrollable.findIndex((div) =>
+            div.contains(event.target as Node),
+        );
+        handleNavigation();
     };
 </script>
 
 <div
     id="packs"
-    class="w-1/2 h-full flex flex-col bg-navy z-1 overflow-y-auto"
+    class="w-screen md:w-1/2 h-full flex flex-col bg-navy z-1 overflow-y-auto"
     bind:this={listContainer}
 >
     <ul>

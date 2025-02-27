@@ -14,7 +14,7 @@ export interface SongDetails {
 
 export interface PackDetails {
     name: string;
-    songs: SongDetails[];
+    songs: { [key: string]: SongDetails }; // key = pack__title
     banner?: string;
 }
 

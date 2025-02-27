@@ -1,4 +1,4 @@
-import Memcached from 'memcached';
+
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 import { Readable } from 'stream';
 import zlib from 'zlib';

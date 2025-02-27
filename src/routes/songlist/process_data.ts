@@ -12,7 +12,7 @@ export function processData(packs: any) {
     for (const pack in packs) {
       if (packs.hasOwnProperty(pack)) {
         const packData = packs[pack];
-        const packSongs: SongDetails[] = [];
+        const packSongs: { [key: string]: SongDetails } = {};
 
         try {
           for (const song in packData.songs) {
@@ -32,13 +32,14 @@ export function processData(packs: any) {
             }
 
             const songDetails: SongDetails = {
-              title: songData["title"],
+              title: songData["title"].toString(),
               pack: packData["name"],
               artist: songData["artist"],
               charts: charts,
-              banner: `${sanitizeName(packData["name"])}__${sanitizeName(songData["title"])}.webp`,
+              banner: songData["banner"] ? `${sanitizeName(packData["name"])}__${sanitizeName(songData["title"])}.webp` : "",
             };
-            packSongs.push(songDetails);
+
+            packSongs[songDetails.title] = songDetails;
           }
         } catch (e) {
           console.error("Error processing songs: ", e);
@@ -46,11 +47,12 @@ export function processData(packs: any) {
 
         // add song to packs list
         const packDetails: PackDetails = {
-          name: packData["name"],
+          name: packData["name"].toString(),
           songs: packSongs,
-          banner: `${sanitizeName(packData["name"])}.webp`,
+          banner: packData["banner"] ? `${sanitizeName(packData["name"])}.webp` : "",
         };
-        packDict[pack] = packDetails;
+
+        packDict[packDetails.name] = packDetails;
       }
     }
   } catch (e) {

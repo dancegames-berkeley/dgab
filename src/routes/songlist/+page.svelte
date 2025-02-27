@@ -6,16 +6,21 @@
   // TOOD: add a loading spinner for when the song data is being fetched
   // TODO: componentize
   import { onMount } from "svelte";
-  import type { ChartDetails, SongDetails, PackDetails, FocusedSong } from "./types";
+  import type {
+    ChartDetails,
+    SongDetails,
+    PackDetails,
+    FocusedSong,
+  } from "./types";
   import { drawArrows } from "../../lib/drawarrowsbg";
   import { processData } from "./process_data";
   import List from "./List.svelte";
   import Song from "./Song.svelte";
 
   export let data;
-  let packDict = processData(data.data);
-  let currentIndex = 0;
 
+  let packDict = processData(data.data);
+  let currentIndex = NaN;
   let focusedSong: FocusedSong = {
     title: "",
     artist: "",
@@ -27,32 +32,16 @@
   // TODO: window resizing works almost all the time but will occasionaly draw arrows on the wrong dimensions and either leave space or overflow (vertically it looks like). i can't seem to reproduce this error. would be nice to fix
   onMount(() => {
     try {
-      const canvas = document.getElementById("arrowsbg") as HTMLCanvasElement;
-      const section = document.getElementById("current song") as HTMLElement;
-
-      drawArrows(canvas, section);
-
-      // redraw on window resize
-      const handleResize = () => drawArrows(canvas, section);
-      window.addEventListener("resize", handleResize);
-
-       return () => {
-        window.removeEventListener("resize", handleResize);
-       };
+      currentIndex = NaN;
     } catch (e) {
       console.error("Error on mount: ", e);
     }
   });
 </script>
 
-<section class="flex flex-row content-area">
-  <List bind:currentIndex bind:focusedSong {packDict}
-  />
-  {#if currentIndex >= 0}
-    <Song
-      {focusedSong}
-    />
-  {/if}
+<section class="flex flex-col-reverse md:flex-row content-area">
+  <List bind:currentIndex bind:focusedSong {packDict} />
+  <Song {focusedSong} {currentIndex} />
 </section>
 
 <style>
