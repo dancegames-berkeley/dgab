@@ -30,15 +30,17 @@
     }
 
     function checkMenu() {
-        const currentSong = document.getElementById("current song");
-        if (currentSong === null) {
-            return;
-        }
-        if (!isMenuOpen || focusedSong.charts.length === 0) {
-            currentSong.classList.add("max-h-[300px]");
-        } else if (isMenuOpen && focusedSong.charts.length > 0) {
-            currentSong.classList.remove("max-h-[300px]");
-        }
+        // const currentSong = document.getElementById("current song");
+        // if (currentSong === null) {
+        //     return;
+        // }
+        // if (!isMenuOpen || focusedSong.charts.length === 0) {
+        //     currentSong.classList.add("max-h-[300px]");
+        //     currentSong.classList.remove("max-h-screen");
+        // } else if (isMenuOpen && focusedSong.charts.length > 0) {
+        //     currentSong.classList.remove("max-h-[300px]");
+        //     currentSong.classList.add("max-h-screen");
+        // }
     }
 
     function checkScreenSize() {
@@ -69,12 +71,14 @@
 
 <div
     id="current song"
-    class="w-screen md:w-1/2 h-screen max-h-screen md:max-h-full flex items-center bg-darknavy relative"
+    class="w-screen md:w-1/2 h-auto max-h-screen md:max-h-full flex items-center bg-darknavy relative"
 >
-    <canvas id="arrowsbg" class="absolute inset-0 w-full z-0"></canvas>
+    <canvas id="arrowsbg" class="absolute inset-0 w-full z-0 flex flex-col"
+    ></canvas>
     {#if !isNaN(currentIndex)}
         <div
-            class="flex flex-col items-center z-1 relative w-full h-full items-center justify-center"
+            id="info"
+            class="flex flex-col items-center z-1 relative w-full items-center justify-center"
         >
             <div class="bg-navy w-full max-w-[750px] flex flex-col items-left">
                 {#if focusedSong.banner}
