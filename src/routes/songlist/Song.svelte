@@ -26,21 +26,6 @@
 
     function toggleMenu() {
         isMenuOpen = !isMenuOpen;
-        checkMenu();
-    }
-
-    function checkMenu() {
-        // const currentSong = document.getElementById("current song");
-        // if (currentSong === null) {
-        //     return;
-        // }
-        // if (!isMenuOpen || focusedSong.charts.length === 0) {
-        //     currentSong.classList.add("max-h-[300px]");
-        //     currentSong.classList.remove("max-h-screen");
-        // } else if (isMenuOpen && focusedSong.charts.length > 0) {
-        //     currentSong.classList.remove("max-h-[300px]");
-        //     currentSong.classList.add("max-h-screen");
-        // }
     }
 
     function checkScreenSize() {
@@ -49,7 +34,6 @@
     }
 
     onMount(() => {
-        checkMenu();
         checkScreenSize();
         window.addEventListener("resize", checkScreenSize);
 
@@ -141,10 +125,11 @@
                                 class="w-full text-slate-500"
                                 on:click={toggleMenu}
                             >
-                                {#if !isMenuOpen}<i
+                                {#if !isMenuOpen && focusedSong.charts.length > 0}<i
                                         class="bi bi-chevron-down text-2xl"
                                     ></i>
-                                {:else}<i class="bi bi-chevron-up text-2xl"
+                                {:else if focusedSong.charts.length > 0}<i
+                                        class="bi bi-chevron-up text-2xl"
                                     ></i>{/if}
                             </button>
                         </div>
