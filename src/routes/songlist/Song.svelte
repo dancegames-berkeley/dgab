@@ -23,6 +23,11 @@
 
     // handle mobile expanded song
     let isMenuOpen = false;
+    let mobileScreen = false;
+
+    function handleExitFocus() {
+        currentIndex = NaN;
+    }
 
     function toggleMenu() {
         isMenuOpen = !isMenuOpen;
@@ -31,6 +36,7 @@
     function checkScreenSize() {
         const mediaQuery = window.matchMedia("(min-width: 768px)"); // 768px = md
         isMenuOpen = mediaQuery.matches;
+        mobileScreen = !mediaQuery.matches;
     }
 
     onMount(() => {
@@ -57,8 +63,10 @@
     id="current song"
     class="w-screen md:w-1/2 h-auto max-h-screen md:max-h-full flex items-center bg-darknavy relative"
 >
-    <canvas id="arrowsbg" class="absolute inset-0 w-full z-0 flex flex-col"
-    ></canvas>
+    {#if !isNaN(currentIndex) && !mobileScreen}
+        <canvas id="arrowsbg" class="absolute inset-0 w-full z-0 flex flex-col"
+        ></canvas>
+    {/if}
     {#if !isNaN(currentIndex)}
         <div
             id="info"
@@ -66,12 +74,20 @@
         >
             <div class="bg-navy w-full max-w-[750px] flex flex-col items-left">
                 {#if focusedSong.banner}
-                    <img
-                        loading="lazy"
-                        src={focusedSong.banner}
-                        class="aspect-[2.55] w-full max-w-[750px] bg-cover bg-center bg-placeholder flex justify-center items-center text-slate-600 text-xl md:text-3xl z-1"
-                        alt={focusedSong.title}
-                    />
+                    <div class="relative inline-block">
+                        <div
+                            class="block md:hidden absolute top-2 right-2 text-2xl text-white cursor-pointer"
+                            on:click={handleExitFocus}
+                        >
+                            <i class="bi bi-x"></i>
+                        </div>
+                        <img
+                            loading="lazy"
+                            src={focusedSong.banner}
+                            class="aspect-[2.55] w-full max-w-[750px] bg-cover bg-center bg-placeholder flex justify-center items-center text-slate-600 text-xl md:text-3xl z-1"
+                            alt={focusedSong.title}
+                        />
+                    </div>
                 {:else}
                     <div
                         class="aspect-[2.55] w-full max-w-[750px] bg-cover bg-center bg-placeholder flex justify-center items-center text-slate-600 text-xl md:text-3xl z-1"
