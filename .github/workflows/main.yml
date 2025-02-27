@@ -15,9 +15,6 @@ jobs:
         with:
           node-version: latest
       - run: npm install
-      - run: npm install @aws-sdk/client-s3
-      - run: npm install @aws-sdk/credential-provider-node
-      - run: npm install memjs
       - name: build app
         run: npm run build
         env:
