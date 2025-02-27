@@ -1,7 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import type { PackDetails, SongDetails, FocusedSong } from "./types";
-    import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 
     export let currentIndex: number;
     export let focusedSong: FocusedSong;
@@ -10,59 +9,6 @@
     let listContainer: HTMLElement;
     let scrollable: HTMLElement[] = [];
     let openPack: string | null = null; // state variable to track what pack is opened
-
-    const REGION = import.meta.env.VITE_AWS_REGION;
-    const BUCKET_NAME = import.meta.env.VITE_AWS_BUCKET_NAME;
-
-    const s3Client = new S3Client({
-        region: REGION,
-        credentials: {
-            accessKeyId: import.meta.env.VITE_AWS_ACCESS_KEY_ID,
-            secretAccessKey: import.meta.env.VITE_AWS_SECRET_ACCESS_KEY,
-        },
-    });
-
-    const readImage = async (stream: ReadableStream): Promise<Blob> => {
-        const reader = stream.getReader();
-        const readableStream = new ReadableStream({
-            start(controller) {
-                function push() {
-                    reader.read().then(({ done, value }) => {
-                        if (done) {
-                            controller.close();
-                            return;
-                        }
-                        controller.enqueue(value);
-                        push();
-                    });
-                }
-                push();
-            },
-        });
-        return await new Response(readableStream).blob();
-    };
-
-    async function fetchImage(banner: string): Promise<string | undefined> {
-        try {
-            const command = new GetObjectCommand({
-                Bucket: BUCKET_NAME,
-                Key: banner,
-            });
-
-            const response = await s3Client.send(command);
-            // read stream and convert to blob
-            if (response.Body) {
-                const blob = await readImage(response.Body as ReadableStream);
-                return URL.createObjectURL(blob);
-            } else {
-                console.log("Error: response.Body is undefined");
-                return "";
-            }
-        } catch (error) {
-            console.log("Error fetching image:", error);
-            return "";
-        }
-    }
 
     onMount(() => {
         try {
@@ -104,17 +50,14 @@
     ) {
         if (type == "pack") {
             focusedSong.title = focusedData?.name;
-            focusedSong.banner = focusedData.banner
-                ? await fetchImage(focusedData.banner || "")
-                : "";
+            console.log(focusedData.banner);
+            focusedSong.banner = focusedData?.banner || "";
             focusedSong.artist = "";
             focusedSong.charts = [];
         } else if (type == "song") {
             focusedSong.title = focusedData?.title || "";
             console.log(focusedData.banner);
-            focusedSong.banner = focusedData.banner
-                ? await fetchImage(focusedData.banner || "")
-                : "";
+            focusedSong.banner = focusedData?.banner || "";
             focusedSong.artist = focusedData?.artist || "";
             focusedSong.charts = focusedData?.charts || [];
         }

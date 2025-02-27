@@ -1,9 +1,19 @@
 import type { PackDetails, SongDetails, ChartDetails } from "./types";
+import { v5 as uuid5 } from "uuid";
 
-function sanitizeName(name: string) {
-  name = name.replace(/ /g, '_');
-  name = name.replace(/[^a-zA-Z0-9_\-]/g, '');
-  return name;
+const url = "https://www.ocf.berkeley.edu/~dgab";
+const NAMESPACE_SONG = "772c3614-0fa4-40c7-b654-af81d7a1b197";
+const NAMESPACE_PACK = "8d7a2f09-452f-4e64-ab80-2320998f4595";
+
+function generate_song_banner_UUID(
+    pack: string,
+    song: string,
+) {
+    return uuid5(`${pack}/${song}`, NAMESPACE_SONG).toString();
+}
+
+function generate_pack_banner_UUID(pack: string) {
+    return uuid5(pack, NAMESPACE_PACK).toString();
 }
 
 export function processData(packs: any) {
@@ -32,11 +42,11 @@ export function processData(packs: any) {
             }
 
             const songDetails: SongDetails = {
-              title: songData["title"].toString(),
+              title: songData["title"],
               pack: packData["name"],
               artist: songData["artist"],
               charts: charts,
-              banner: songData["banner"] ? `${sanitizeName(packData["name"])}__${sanitizeName(songData["title"])}.webp` : "",
+              banner: `${url}/banners-webp/${generate_song_banner_UUID(packData["name"], songData["title"])}.webp`,
             };
 
             packSongs[songDetails.title] = songDetails;
@@ -47,9 +57,9 @@ export function processData(packs: any) {
 
         // add song to packs list
         const packDetails: PackDetails = {
-          name: packData["name"].toString(),
+          name: packData["name"],
           songs: packSongs,
-          banner: packData["banner"] ? `${sanitizeName(packData["name"])}.webp` : "",
+          banner: `${url}/banners-webp/${generate_pack_banner_UUID(packData["name"])}.webp`,
         };
 
         packDict[packDetails.name] = packDetails;
