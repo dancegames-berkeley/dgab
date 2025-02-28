@@ -124,7 +124,7 @@
                     </div>
                     <div class="hidden md:flex">
                         <div
-                            class="mt-4 flex flex-col font-miso text-2xl overflow-y-auto"
+                            class="mt-4 flex flex-col font-miso text-2xl overflow-y-auto w-full"
                         >
                             {#if focusedSong.charts.length > 0}
                                 {#each filter(focusedSong.charts.sort(sortByDifficulty), filters["singles"]) as chart}
