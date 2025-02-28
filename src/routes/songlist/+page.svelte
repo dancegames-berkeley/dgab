@@ -28,6 +28,7 @@
     banner: "",
     charts: [],
   };
+  let filters = { title: false, artist: false, singles: true };
 
   // draw arrows background
   // TODO: window resizing works almost all the time but will occasionaly draw arrows on the wrong dimensions and either leave space or overflow (vertically it looks like). i can't seem to reproduce this error. would be nice to fix
@@ -41,8 +42,8 @@
 </script>
 
 <section class="flex flex-col-reverse md:flex-row content-area">
-  <List bind:currentIndex bind:focusedSong {packDict} {prevIndex} />
-  <Song {focusedSong} {currentIndex} {prevIndex} />
+  <List bind:currentIndex bind:focusedSong {packDict} {prevIndex} {filters} />
+  <Song {focusedSong} {currentIndex} {prevIndex} {filters} />
 </section>
 
 <style>

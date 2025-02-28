@@ -6,6 +6,7 @@
     export let focusedSong: FocusedSong;
     export let currentIndex: number;
     export let prevIndex: number;
+    export let filters: { [key: string]: boolean };
 
     const sortByDifficulty = (a: ChartDetails, b: ChartDetails) => {
         const difficultyOrder = [
@@ -21,6 +22,18 @@
             difficultyOrder.indexOf(b.difficulty.toLowerCase())
         );
     };
+
+    function filter(charts: ChartDetails[], singles: boolean): ChartDetails[] {
+        let filteredCharts = [];
+        for (const chart of charts) {
+            if (singles && chart.steps_type === "dance-single") {
+                filteredCharts.push(chart);
+            } else if (!singles && chart.steps_type === "dance-double") {
+                filteredCharts.push(chart);
+            }
+        }
+        return filteredCharts;
+    }
 
     // handle mobile
     let mobileScreen = false;
@@ -61,12 +74,12 @@
             <div class="bg-navy w-full max-w-[750px] flex flex-col items-left">
                 {#if focusedSong.banner}
                     <div class="relative inline-block">
-                        <div
+                        <button
                             class="block md:hidden absolute top-2 right-2 text-2xl text-white cursor-pointer"
                             on:click={handleExitFocus}
                         >
                             <i class="bi bi-x"></i>
-                        </div>
+                        </button>
                         <img
                             loading="lazy"
                             src={focusedSong.banner}
@@ -114,7 +127,7 @@
                             class="mt-4 flex flex-col font-miso text-2xl overflow-y-auto"
                         >
                             {#if focusedSong.charts.length > 0}
-                                {#each focusedSong.charts.sort(sortByDifficulty) as chart}
+                                {#each filter(focusedSong.charts.sort(sortByDifficulty), filters["singles"]) as chart}
                                     <div class="flex flex-row h-16 flex-grow-0">
                                         <p
                                             class="w-12 flex justify-center text-5xl font-wendy text-{chart.difficulty.toLowerCase()}"

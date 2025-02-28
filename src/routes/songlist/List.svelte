@@ -6,6 +6,7 @@
     export let prevIndex: number;
     export let focusedSong: FocusedSong;
     export let packDict: { [key: string]: PackDetails } = {};
+    export let filters: { [key: string]: boolean };
 
     let listContainer: HTMLElement;
     let scrollable: HTMLElement[] = [];
@@ -25,14 +26,9 @@
             const observer = new MutationObserver(() => {
                 updateScrollable();
             });
-
             observer.observe(listContainer, { childList: true, subtree: true });
 
-            // highlight the first element on mount
-            if (scrollable.length > 0) {
-                currentIndex = 0;
-                scrollable[currentIndex].classList.add("focused");
-            }
+            currentIndex = 0;
 
             return () => {
                 window.removeEventListener("keydown", handleKeydown);
