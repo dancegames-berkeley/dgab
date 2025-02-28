@@ -2,6 +2,7 @@ export interface ChartDetails {
     meter: number;
     difficulty: string;
     credit: string;
+    steps_type: string;
 }
 
 export interface SongDetails {

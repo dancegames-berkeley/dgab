@@ -37,6 +37,7 @@ export function processData(packs: any) {
                 meter: chartData["meter"],
                 difficulty: chartData["difficulty"],
                 credit: chartData["credit"],
+                steps_type: chartData["steps_type"],
               };
               charts.push(chartDetails);
             }
