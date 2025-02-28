@@ -88,20 +88,24 @@
             currentIndex =
                 (currentIndex - 1 + scrollable.length) % scrollable.length;
         }
-        event.preventDefault();
-        handleNavigation();
-        if (currentIndex < 10) {
-            window.scrollTo({ top: 0, behavior: "smooth" });
+        if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+            event.preventDefault();
+            handleNavigation();
+            
+            if (currentIndex < 10) {
+                window.scrollTo({ top: 0, behavior: "smooth" });
+            }
+
+            let block: ScrollLogicalPosition = "center";
+            if (currentIndex < 10 || currentIndex > scrollable.length - 10) {
+                block = "nearest";
+            }
+            scrollable[currentIndex].scrollIntoView({
+                behavior: "smooth",
+                block: block,
+                inline: "start",
+            });
         }
-        let block: ScrollLogicalPosition = "center";
-        if (currentIndex < 10 || currentIndex > scrollable.length - 10) {
-            block = "nearest";
-        }
-        scrollable[currentIndex].scrollIntoView({
-            behavior: "smooth",
-            block: block,
-            inline: "start",
-        });
     };
 
     // handle enter key to select pack
