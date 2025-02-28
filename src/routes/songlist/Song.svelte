@@ -5,6 +5,7 @@
 
     export let focusedSong: FocusedSong;
     export let currentIndex: number;
+    export let prevIndex: number;
 
     const sortByDifficulty = (a: ChartDetails, b: ChartDetails) => {
         const difficultyOrder = [
@@ -21,28 +22,14 @@
         );
     };
 
-    // handle mobile expanded song
-    let isMenuOpen = false;
+    // handle mobile
     let mobileScreen = false;
 
     function handleExitFocus() {
         currentIndex = NaN;
     }
 
-    function toggleMenu() {
-        isMenuOpen = !isMenuOpen;
-    }
-
-    function checkScreenSize() {
-        const mediaQuery = window.matchMedia("(min-width: 768px)"); // 768px = md
-        isMenuOpen = mediaQuery.matches;
-        mobileScreen = !mediaQuery.matches;
-    }
-
     onMount(() => {
-        checkScreenSize();
-        window.addEventListener("resize", checkScreenSize);
-
         const canvas = document.getElementById("arrowsbg") as HTMLCanvasElement;
         const section = document.getElementById("current song") as HTMLElement;
 
@@ -54,7 +41,6 @@
 
         return () => {
             window.removeEventListener("resize", handleResize);
-            window.removeEventListener("resize", checkScreenSize);
         };
     });
 </script>
@@ -108,11 +94,26 @@
                             {focusedSong.artist}
                         </p>
                     {/if}
-                    <div
-                        class="mt-4 flex flex-col font-miso text-2xl overflow-y-auto"
-                    >
-                        {#if isMenuOpen}
-                            {#if focusedSong.charts}
+                    <div class="flex md:hidden pb-4">
+                        {#if focusedSong.charts.length > 0}
+                            <p class="">
+                                <span class="text-slate-500 p-2 pt-0"
+                                    >CHARTS</span
+                                >
+                                {#each focusedSong.charts.sort(sortByDifficulty) as chart}
+                                    <span
+                                        class="mx-2 text-3xl font-wendy text-{chart.difficulty.toLowerCase()}"
+                                        >{chart.meter}</span
+                                    >
+                                {/each}
+                            </p>
+                        {/if}
+                    </div>
+                    <div class="hidden md:flex">
+                        <div
+                            class="mt-4 flex flex-col font-miso text-2xl overflow-y-auto"
+                        >
+                            {#if focusedSong.charts.length > 0}
                                 {#each focusedSong.charts.sort(sortByDifficulty) as chart}
                                     <div class="flex flex-row h-16 flex-grow-0">
                                         <p
@@ -135,19 +136,6 @@
                                     </div>
                                 {/each}
                             {/if}
-                        {/if}
-                        <div class="flex md:hidden">
-                            <button
-                                class="w-full text-slate-500"
-                                on:click={toggleMenu}
-                            >
-                                {#if !isMenuOpen && focusedSong.charts.length > 0}<i
-                                        class="bi bi-chevron-down text-2xl"
-                                    ></i>
-                                {:else if focusedSong.charts.length > 0}<i
-                                        class="bi bi-chevron-up text-2xl"
-                                    ></i>{/if}
-                            </button>
                         </div>
                     </div>
                 </div>

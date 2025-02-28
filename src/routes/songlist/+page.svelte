@@ -21,6 +21,7 @@
 
   let packDict = processData(data.data);
   let currentIndex = NaN;
+  let prevIndex = NaN;
   let focusedSong: FocusedSong = {
     title: "",
     artist: "",
@@ -40,8 +41,8 @@
 </script>
 
 <section class="flex flex-col-reverse md:flex-row content-area">
-  <List bind:currentIndex bind:focusedSong {packDict} />
-  <Song {focusedSong} {currentIndex} />
+  <List bind:currentIndex bind:focusedSong {packDict} {prevIndex} />
+  <Song {focusedSong} {currentIndex} {prevIndex} />
 </section>
 
 <style>

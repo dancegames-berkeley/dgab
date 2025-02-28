@@ -3,6 +3,7 @@
     import type { PackDetails, SongDetails, FocusedSong } from "./types";
 
     export let currentIndex: number;
+    export let prevIndex: number;
     export let focusedSong: FocusedSong;
     export let packDict: { [key: string]: PackDetails } = {};
 
@@ -71,7 +72,7 @@
     // updates scrollable items
     const updateScrollable = () => {
         scrollable = Array.from(listContainer.querySelectorAll(".scroll-item"));
-        currentIndex = scrollable.findIndex((div) =>
+        currentIndex = prevIndex = scrollable.findIndex((div) =>
             div.classList.contains("focused"),
         );
     };
@@ -83,15 +84,17 @@
             return;
         }
         if (event.key === "ArrowDown") {
+            prevIndex = currentIndex;
             currentIndex = (currentIndex + 1) % scrollable.length;
         } else if (event.key === "ArrowUp") {
+            prevIndex = currentIndex;
             currentIndex =
                 (currentIndex - 1 + scrollable.length) % scrollable.length;
         }
         if (event.key === "ArrowDown" || event.key === "ArrowUp") {
             event.preventDefault();
             handleNavigation();
-            
+
             if (currentIndex < 10) {
                 window.scrollTo({ top: 0, behavior: "smooth" });
             }
@@ -159,10 +162,14 @@
             return;
         }
         // update current index on hover
+        prevIndex = currentIndex;
         currentIndex = scrollable.findIndex((div) =>
             div.contains(event.target as Node),
         );
-        handleNavigation();
+        console.log("currentIndex: ", currentIndex, "prevIndex: ", prevIndex);
+        if (currentIndex !== prevIndex) {
+            handleNavigation();
+        }
     };
 </script>
 
