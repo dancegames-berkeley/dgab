@@ -1,11 +1,13 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import type { PackDetails, SongDetails, FocusedSong } from "./types";
+    import Search from "./Search.svelte";
 
     export let currentIndex: number;
     export let prevIndex: number;
     export let focusedSong: FocusedSong;
     export let packDict: { [key: string]: PackDetails } = {};
+    export let query: string;
     export let filters: { [key: string]: boolean };
 
     let listContainer: HTMLElement;
@@ -154,6 +156,7 @@
     }
 
     const handleHover = (event: MouseEvent) => {
+        console.log("hovering: ", query);
         if (scrollable.length === 0) {
             return;
         }
@@ -167,19 +170,49 @@
             handleNavigation();
         }
     };
+
+    function filterSongs(query: string) {
+        let filteredDict: { [key: string]: { name: string; banner: string; songs: { [key: string]: SongDetails } } } = {};
+        for (const [packName, packDetails] of Object.entries(packDict)) {
+            let filteredSongs: { [key: string]: SongDetails } = {};
+            for (const [songName, songDetails] of Object.entries(
+                packDetails.songs,
+            )) {
+                if (
+                    songDetails.title.toLowerCase().includes(query)
+                ) {
+                    filteredSongs[songName] = songDetails;
+                }
+            }
+            if (Object.keys(filteredSongs).length > 0) {
+                filteredDict[packName] = {
+                    name: packDetails.name,
+                    banner: packDetails.banner || "",
+                    songs: filteredSongs,
+                };
+            }
+        }
+        console.log(filteredDict)
+        return filteredDict;
+    }
+
+    // Reactive statement to update filteredPackDict whenever query changes
+    $: filteredPackDict = filterSongs(query);
 </script>
 
 <div
     id="packs"
     class="w-screen md:w-1/2 h-full flex flex-col bg-navy z-1 overflow-y-auto"
     bind:this={listContainer}
+
 >
+    <Search bind:query={query}/>
     <ul>
         <!-- <li class="font-semibold text-darknavy text-center bg-yellow-500">
         Note: the current songlist is a placeholder and it will be up to date
         soon.
       </li> -->
-        {#each Object.entries(packDict).sort( ([, a], [, b]) => a.name.localeCompare(b.name), ) as [_, packDetails]}
+        {#each Object.entries(filteredPackDict).sort( ([, a], [, b]) => a.name.localeCompare(b.name), ) as [_, packDetails]}
             <li
                 class="pack scroll-item font-semibold text-blue-300 text-center"
             >
