@@ -23,7 +23,7 @@
     banner: "",
     charts: [],
   };
-  let filters: { [key: string]: string } = { sortby: "pack", stepstype: "dance-single" }; 
+  let filters: { [key: string]: string } = { sortby: "title", stepstype: "dance-single" }; 
   let query: string = "";
 
   // draw arrows background

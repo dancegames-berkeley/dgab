@@ -27,9 +27,15 @@ export function filterSongs(packDict: { [key: string]: PackDetails }, query: str
         for (const [songName, songDetails] of Object.entries(
             packDetails.songs,
         ) as [string, SongDetails][]) {
-            if (
-                songDetails.title.toLowerCase().includes(query)
-            ) {
+            if (filters.sortby == "title" && songDetails.title.toLowerCase().includes(query)) {
+                let filteredCharts = filterCharts(songDetails.charts, filters.stepstype)
+                if (filteredCharts.length > 0) {
+                    filteredSongs[songName] = {
+                        ...songDetails,
+                        charts: filteredCharts
+                    };
+                }
+            } else if (filters.sortby == "artist" && songDetails.artist && songDetails.artist.toLowerCase().includes(query)) {
                 let filteredCharts = filterCharts(songDetails.charts, filters.stepstype)
                 if (filteredCharts.length > 0) {
                     filteredSongs[songName] = {
@@ -47,6 +53,5 @@ export function filterSongs(packDict: { [key: string]: PackDetails }, query: str
             };
         }
     }
-    // console.log(filteredDict);
     return filteredDict;
 }

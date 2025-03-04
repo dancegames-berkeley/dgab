@@ -14,8 +14,8 @@ import { onMount } from "svelte";
         }
         searchInput.addEventListener("input", (e) => {
             let inputQuery = (e.target as HTMLInputElement).value
-            if (inputQuery && inputQuery.trim().length > 0){
-                query = inputQuery.trimEnd().toLowerCase()
+            if (inputQuery && inputQuery.length > 0){
+                query = inputQuery.toLowerCase()
             } else {
                 query = "";
             }
@@ -46,7 +46,7 @@ import { onMount } from "svelte";
     }
 
 </script>
-<div class="relative flex text-slate-500 bg-darknavy">
+<div id="search" class="sticky top-0 flex text-slate-500 bg-darknavy">
     <i class="bi bi-filter-right absolute right-2 cursor-pointer" on:click={toggleMenu}></i>
     {#if isMenuOpen}
     <div class="absolute top-10 right-0 bg-darknavy text-slate-500">
@@ -56,9 +56,12 @@ import { onMount } from "svelte";
             </button>
             {#if isSortMenuOpen}
                 <div class="flex flex-col text-left">
-                    <button class="option" value="pack" on:click={() => selectFilter("sortby", "pack")}>pack</button>
-                    <button class="option" value="title" on:click={() => selectFilter("sortby", "title")}>title</button>
-                    <button class="option" value="artist" on:click={() => selectFilter("sortby", "artist")}>artist</button>
+                    {#if filters.sortby === "artist"}
+                        <button class="option" value="title" on:click={() => selectFilter("sortby", "title")}>title</button>
+                    {/if}
+                    {#if filters.sortby === "title"}
+                        <button class="option" value="artist" on:click={() => selectFilter("sortby", "artist")}>artist</button>
+                    {/if}
                 </div>
             {/if}
             
@@ -67,12 +70,16 @@ import { onMount } from "svelte";
             </button>
             {#if isStepsMenuOpen}
                 <div class="flex flex-col text-left">
-                    <button class="option" value="dance-single" on:click={() => selectFilter("stepstype", "dance-single")}>singles</button>
-                    <button class="option" value="dance-double" on:click={() => selectFilter("stepstype", "dance-double")}>doubles</button>
+                    {#if filters.stepstype === "dance-double"}
+                        <button class="option" value="dance-single" on:click={() => selectFilter("stepstype", "dance-single")}>singles</button>
+                    {/if}
+                    {#if filters.stepstype === "dance-single"}
+                        <button class="option" value="dance-double" on:click={() => selectFilter("stepstype", "dance-double")}>doubles</button>
+                    {/if}
                 </div>
             {/if}
         </div>
     </div>
     {/if}
-    <input type="text" bind:value={query} class="search bg-darknavy px-2 flex-grow" placeholder="search..."/>
+    <input type="text" bind:value={query} class="search bg-darknavy px-2 flex-grow" placeholder="search by {filters.sortby}"/>
 </div>
