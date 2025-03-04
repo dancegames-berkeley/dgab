@@ -1,14 +1,18 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import type { PackDetails, SongDetails, FocusedSong } from "./types";
+    import type { PackDetails, SongDetails, FocusedSong } from "../../lib/types";
+    import { filterSongs } from '../../lib/utils';
     import Search from "./Search.svelte";
+    import PackList from "./list components/PackList.svelte";
+    import ArtistList from "./list components/ArtistList.svelte";
+    import TitleList from "./list components/TitleList.svelte";
 
     export let currentIndex: number;
     export let prevIndex: number;
     export let focusedSong: FocusedSong;
     export let packDict: { [key: string]: PackDetails } = {};
     export let query: string;
-    export let filters: { [key: string]: boolean };
+    export let filters: { [key: string]: string };
 
     let listContainer: HTMLElement;
     let scrollable: HTMLElement[] = [];
@@ -156,7 +160,7 @@
     }
 
     const handleHover = (event: MouseEvent) => {
-        console.log("hovering: ", query);
+        console.log("hovering");
         if (scrollable.length === 0) {
             return;
         }
@@ -165,39 +169,12 @@
         currentIndex = scrollable.findIndex((div) =>
             div.contains(event.target as Node),
         );
-        console.log("currentIndex: ", currentIndex, "prevIndex: ", prevIndex);
         if (currentIndex !== prevIndex) {
             handleNavigation();
         }
     };
 
-    function filterSongs(query: string) {
-        let filteredDict: { [key: string]: { name: string; banner: string; songs: { [key: string]: SongDetails } } } = {};
-        for (const [packName, packDetails] of Object.entries(packDict)) {
-            let filteredSongs: { [key: string]: SongDetails } = {};
-            for (const [songName, songDetails] of Object.entries(
-                packDetails.songs,
-            )) {
-                if (
-                    songDetails.title.toLowerCase().includes(query)
-                ) {
-                    filteredSongs[songName] = songDetails;
-                }
-            }
-            if (Object.keys(filteredSongs).length > 0) {
-                filteredDict[packName] = {
-                    name: packDetails.name,
-                    banner: packDetails.banner || "",
-                    songs: filteredSongs,
-                };
-            }
-        }
-        console.log(filteredDict)
-        return filteredDict;
-    }
-
-    // Reactive statement to update filteredPackDict whenever query changes
-    $: filteredPackDict = filterSongs(query);
+    $: filteredPackDict = filterSongs(packDict, query, filters);
 </script>
 
 <div
@@ -206,44 +183,18 @@
     bind:this={listContainer}
 
 >
-    <Search bind:query={query}/>
+    <Search bind:query bind:filters/>
     <ul>
         <!-- <li class="font-semibold text-darknavy text-center bg-yellow-500">
         Note: the current songlist is a placeholder and it will be up to date
         soon.
       </li> -->
-        {#each Object.entries(filteredPackDict).sort( ([, a], [, b]) => a.name.localeCompare(b.name), ) as [_, packDetails]}
-            <li
-                class="pack scroll-item font-semibold text-blue-300 text-center"
-            >
-                <!-- TODO: not critical but might change, was kinda breaking when using enter to just trigger onclick but it would be nice to make it work -->
-                <button
-                    type="button"
-                    class="p-2 w-full"
-                    on:click|preventDefault={() =>
-                        handleClick(packDetails.name)}
-                    on:keydown={(event) => {
-                        if (event.key === "Enter") {
-                            event.stopPropagation();
-                            event.preventDefault();
-                            handleEnter(event);
-                        }
-                    }}
-                >
-                    {packDetails.name}
-                </button>
-            </li>
-            {#if openPack === packDetails.name}
-                <div class="bg-darknavy">
-                    <ul>
-                        {#each Object.entries(packDetails.songs).sort( (a, b) => a[1].title.localeCompare(b[1].title), ) as [songName, songDetails]}
-                            <li class="song scroll-item text-center p-2">
-                                <p>{songDetails.title}</p>
-                            </li>
-                        {/each}
-                    </ul>
-                </div>
-            {/if}
-        {/each}
+      {#if filters.sortby === "pack"}
+        <PackList {filteredPackDict} {openPack} {handleClick} {handleEnter} />
+      {:else if filters.sortby === "artist"}
+        <ArtistList {filteredPackDict} {openPack} {handleClick} {handleEnter} />
+      {:else}
+        <TitleList {filteredPackDict} {openPack} {handleClick} {handleEnter} />
+      {/if}
     </ul>
 </div>

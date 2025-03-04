@@ -1,12 +1,13 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import type { ChartDetails, FocusedSong } from "./types";
+    import type { ChartDetails, FocusedSong } from "../../lib/types";
     import { drawArrows } from "../../lib/drawarrowsbg";
+    import { filterCharts } from '../../lib/utils';
 
     export let focusedSong: FocusedSong;
     export let currentIndex: number;
     export let prevIndex: number;
-    export let filters: { [key: string]: boolean };
+    export let filters: { [key: string]: string };
 
     const sortByDifficulty = (a: ChartDetails, b: ChartDetails) => {
         const difficultyOrder = [
@@ -22,18 +23,6 @@
             difficultyOrder.indexOf(b.difficulty.toLowerCase())
         );
     };
-
-    function filter(charts: ChartDetails[], singles: boolean): ChartDetails[] {
-        let filteredCharts = [];
-        for (const chart of charts) {
-            if (singles && chart.steps_type === "dance-single") {
-                filteredCharts.push(chart);
-            } else if (!singles && chart.steps_type === "dance-double") {
-                filteredCharts.push(chart);
-            }
-        }
-        return filteredCharts;
-    }
 
     // handle mobile
     let mobileScreen = false;
@@ -127,7 +116,7 @@
                             class="mt-4 flex flex-col font-miso text-2xl overflow-y-auto w-full"
                         >
                             {#if focusedSong.charts.length > 0}
-                                {#each filter(focusedSong.charts.sort(sortByDifficulty), filters["singles"]) as chart}
+                                {#each filterCharts(focusedSong.charts.sort(sortByDifficulty), filters.stepstype) as chart}
                                     <div class="flex flex-row h-16 flex-grow-0">
                                         <p
                                             class="w-12 flex justify-center text-5xl font-wendy text-{chart.difficulty.toLowerCase()}"

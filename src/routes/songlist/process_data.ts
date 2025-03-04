@@ -1,4 +1,4 @@
-import type { PackDetails, SongDetails, ChartDetails } from "./types";
+import type { PackDetails, SongDetails, ChartDetails } from "../../lib/types";
 import { v5 as uuid5 } from "uuid";
 
 const url = "https://www.ocf.berkeley.edu/~dgab";
@@ -6,14 +6,14 @@ const NAMESPACE_SONG = "772c3614-0fa4-40c7-b654-af81d7a1b197";
 const NAMESPACE_PACK = "8d7a2f09-452f-4e64-ab80-2320998f4595";
 
 function generate_song_banner_UUID(
-    pack: string,
-    song: string,
+  pack: string,
+  song: string,
 ) {
-    return uuid5(`${pack}/${song}`, NAMESPACE_SONG).toString();
+  return uuid5(`${pack}/${song}`, NAMESPACE_SONG).toString();
 }
 
 function generate_pack_banner_UUID(pack: string) {
-    return uuid5(pack, NAMESPACE_PACK).toString();
+  return uuid5(pack, NAMESPACE_PACK).toString();
 }
 
 export function processData(packs: any) {

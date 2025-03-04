@@ -6,7 +6,7 @@
 
   import type {
     FocusedSong,
-  } from "./types";
+  } from "../../lib/types";
 
   import { processData } from "./process_data";
 
@@ -23,7 +23,7 @@
     banner: "",
     charts: [],
   };
-  let filters = { title: false, artist: false, singles: true };
+  let filters: { [key: string]: string } = { sortby: "pack", stepstype: "dance-single" }; 
   let query: string = "";
 
   // draw arrows background
@@ -38,7 +38,7 @@
 </script>
 
 <section class="flex flex-col-reverse md:flex-row content-area">
-  <List bind:currentIndex bind:focusedSong {packDict} {prevIndex} {filters} {query}/>
+  <List bind:currentIndex bind:focusedSong bind:filters {packDict} {prevIndex} {query}/>
   <Song {focusedSong} {currentIndex} {prevIndex} {filters} />
 </section>
 
