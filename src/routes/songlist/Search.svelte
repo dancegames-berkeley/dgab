@@ -19,7 +19,6 @@ import { onMount } from "svelte";
             } else {
                 query = "";
             }
-            console.log(query)
         });
     });
 
@@ -37,7 +36,6 @@ import { onMount } from "svelte";
 
     function selectFilter(key: string, value: string) {
         filters = { ...filters, [key]: value };
-        console.log(filters)
         if (key == "sortby") {
             isSortMenuOpen = false;
         } else if (key == "stepstype") {
