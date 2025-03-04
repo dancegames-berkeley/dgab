@@ -45,22 +45,12 @@
 
     // updates CSS to show focus on the current element
     async function updateFocus(
-        focusedData: PackDetails | SongDetails,
-        type: string,
+        focusedData: PackDetails | SongDetails
     ) {
-        if (type == "pack") {
-            focusedSong.title = focusedData?.name;
-            console.log(focusedData.banner);
-            focusedSong.banner = focusedData?.banner || "";
-            focusedSong.artist = "";
-            focusedSong.charts = [];
-        } else if (type == "song") {
-            focusedSong.title = focusedData?.title || "";
-            console.log(focusedData.banner);
-            focusedSong.banner = focusedData?.banner || "";
-            focusedSong.artist = focusedData?.artist || "";
-            focusedSong.charts = focusedData?.charts || [];
-        }
+        focusedSong.title = focusedData?.name ? focusedData.name : focusedData.title;
+        focusedSong.banner = focusedData?.banner || "";
+        focusedSong.artist = focusedData?.artist ? focusedData.artist : "";
+        focusedSong.charts = focusedData?.charts ? focusedData.charts : [];
     }
 
     // on click show dropdown for all songs in pack
@@ -146,12 +136,12 @@
         if (openPack && songName && songName !== openPack) {
             let focusedData = packDict[openPack].songs[songName];
             if (focusedData) {
-                updateFocus(focusedData, "song");
+                updateFocus(focusedData);
             }
         } else if (currentPack) {
             let focusedData = packDict[currentPack];
             if (focusedData) {
-                updateFocus(focusedData, "pack");
+                updateFocus(focusedData);
             }
         }
     }
