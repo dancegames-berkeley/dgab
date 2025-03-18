@@ -24,7 +24,7 @@
 	});
 </script>
 
-<div id="footer" class="w-screen bg-black p-4 text-white">
+<div id="footer" class="w-screen bg-black p-4 text-white text-sm">
 	<div
 		class="flex flex-col-reverse md:flex-row sm:11/12 md:10/12 max-w-5xl m-auto justify-between items-center"
 	>

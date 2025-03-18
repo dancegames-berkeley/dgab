@@ -19,8 +19,6 @@ export function filterCharts(charts: ChartDetails[], stepstype: string): ChartDe
  * @param query
  */
 export function filterSongs(packDict: { [key: string]: PackDetails }, query: string, filters: { [key: string]: string }) {
-    console.log("packdict: ", packDict);
-    console.log(filters);
     let filteredDict: { [key: string]: { name: string; banner: string; songs: { [key: string]: SongDetails } } } = {};
     for (const [packName, packDetails] of Object.entries(packDict)) {
         let filteredSongs: { [key: string]: SongDetails } = {};

@@ -1,7 +1,11 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import type { PackDetails, SongDetails, FocusedSong } from "../../lib/types";
-    import { filterSongs } from '../../lib/utils';
+    import type {
+        PackDetails,
+        SongDetails,
+        FocusedSong,
+    } from "../../lib/types";
+    import { filterSongs } from "../../lib/utils";
     import Search from "./Search.svelte";
 
     export let currentIndex: number;
@@ -44,10 +48,10 @@
     });
 
     // updates CSS to show focus on the current element
-    async function updateFocus(
-        focusedData: PackDetails | SongDetails
-    ) {
-        focusedSong.title = focusedData?.name ? focusedData.name : focusedData.title;
+    async function updateFocus(focusedData: PackDetails | SongDetails) {
+        focusedSong.title = focusedData?.name
+            ? focusedData.name
+            : focusedData.title;
         focusedSong.banner = focusedData?.banner || "";
         focusedSong.artist = focusedData?.artist ? focusedData.artist : "";
         focusedSong.charts = focusedData?.charts ? focusedData.charts : [];
@@ -147,7 +151,6 @@
     }
 
     const handleHover = (event: MouseEvent) => {
-        console.log("hovering");
         if (scrollable.length === 0) {
             return;
         }
@@ -168,46 +171,45 @@
     id="packs"
     class="w-screen md:w-1/2 h-full flex flex-col bg-navy z-1 overflow-y-auto"
     bind:this={listContainer}
-
 >
-    <Search bind:query bind:filters/>
+    <Search bind:query bind:filters />
     <ul>
         <!-- <li class="font-semibold text-darknavy text-center bg-yellow-500">
         Note: the current songlist is a placeholder and it will be up to date
         soon.
       </li> -->
-    {#each Object.entries(filteredPackDict).sort( ([, a], [, b]) => a.name.localeCompare(b.name), ) as [_, packDetails]}
-        <li
-            class="pack scroll-item font-semibold text-blue-300 text-center"
-        >
-            <!-- TODO: not critical but might change, was kinda breaking when using enter to just trigger onclick but it would be nice to make it work -->
-            <button
-                type="button"
-                class="p-2 w-full"
-                on:click|preventDefault={() =>
-                    handleClick(packDetails.name)}
-                on:keydown={(event) => {
-                    if (event.key === "Enter") {
-                        event.stopPropagation();
-                        event.preventDefault();
-                        handleEnter(event);
-                    }
-                }}
+        {#each Object.entries(filteredPackDict).sort( ([, a], [, b]) => a.name.localeCompare(b.name), ) as [_, packDetails]}
+            <li
+                class="pack scroll-item font-semibold text-blue-300 text-center"
             >
-                {packDetails.name}
-            </button>
-        </li>
-        {#if openPack === packDetails.name}
-            <div class="bg-darknavy">
-                <ul>
-                    {#each Object.entries(packDetails.songs).sort( (a, b) => a[1].title.localeCompare(b[1].title), ) as [songName, songDetails]}
-                        <li class="song scroll-item text-center p-2">
-                            <p>{songDetails.title}</p>
-                        </li>
-                    {/each}
-                </ul>
-            </div>
-        {/if}
-    {/each}
+                <!-- TODO: not critical but might change, was kinda breaking when using enter to just trigger onclick but it would be nice to make it work -->
+                <button
+                    type="button"
+                    class="p-2 w-full"
+                    on:click|preventDefault={() =>
+                        handleClick(packDetails.name)}
+                    on:keydown={(event) => {
+                        if (event.key === "Enter") {
+                            event.stopPropagation();
+                            event.preventDefault();
+                            handleEnter(event);
+                        }
+                    }}
+                >
+                    {packDetails.name}
+                </button>
+            </li>
+            {#if openPack === packDetails.name}
+                <div class="bg-darknavy">
+                    <ul>
+                        {#each Object.entries(packDetails.songs).sort( (a, b) => a[1].title.localeCompare(b[1].title), ) as [songName, songDetails]}
+                            <li class="song scroll-item text-center p-2">
+                                <p>{songDetails.title}</p>
+                            </li>
+                        {/each}
+                    </ul>
+                </div>
+            {/if}
+        {/each}
     </ul>
 </div>

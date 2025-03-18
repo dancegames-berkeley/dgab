@@ -5,9 +5,8 @@ import cors from 'cors';
 
 dotenv.config();
 
-const assetsPath = './data/assets';
-
 const app = express();
+
 const corsOptions = {
 	origin: '*',
 	methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
@@ -15,12 +14,9 @@ const corsOptions = {
 	credentials: true
 };
 app.use(cors(corsOptions));
+  
 app.use(express.json());
 
-// serve assets dynamically
-app.use(express.static(assetsPath))
-
-// let sveltekit handle everything
 app.use(handler);
 
 app.listen(3000, () => {
